@@ -12,6 +12,13 @@ const {
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
 const FILE_NAME = `mocks.json`;
+const MONTHS = 3;
+const DAYS_IN_MONTH = 30;
+const HOURS_IN_DAY = 24;
+const MINNUTES_IN_HOUR = 60;
+const SECONDS_IN_MINNUTES = 60;
+const MILLISECONDS_IN_SECOND = 1000;
+const MAX_ANNOUNCE_SENTENCES = 5;
 
 const TITLES = [
   `Ёлки. История деревьев`,
@@ -62,18 +69,13 @@ const CATEGORIES = [
 ];
 
 const getRandomElement = (array) => array[random(array.length - 1)];
-const getRandomeDate = () => {
-  const MONTHS = 3;
-  const DAYS_IN_MONTH = 30;
-  const HOURS_IN_DAY = 24;
-  const MINNUTES_IN_HOUR = 60;
-  const SECONDS_IN_MINNUTES = 60;
-  const MILLISECONDS_IN_SECOND = 1000;
-  const MS_IN_THREE_MONTH = MONTHS * DAYS_IN_MONTH * HOURS_IN_DAY * MINNUTES_IN_HOUR * SECONDS_IN_MINNUTES * MILLISECONDS_IN_SECOND;
-  const TIMESTAMP = now();
-  const RANDOM_TIMESTAMP = random(TIMESTAMP - MS_IN_THREE_MONTH, TIMESTAMP);
 
-  return new Date(RANDOM_TIMESTAMP).toLocaleString();
+const getRandomeDate = () => {
+  const msInThreeMonth = MONTHS * DAYS_IN_MONTH * HOURS_IN_DAY * MINNUTES_IN_HOUR * SECONDS_IN_MINNUTES * MILLISECONDS_IN_SECOND;
+  const timestamp = now();
+  const randomTimestamp = random(timestamp - msInThreeMonth, timestamp);
+
+  return new Date(randomTimestamp).toLocaleString();
 };
 
 const shuffle = (someArray) => {
@@ -86,7 +88,6 @@ const shuffle = (someArray) => {
 };
 
 const getAnnounceAndFullText = (sentences) => {
-  const MAX_ANNOUNCE_SENTENCES = 5;
   const announceSentences = random(1, MAX_ANNOUNCE_SENTENCES);
   const fullTextSentences = random(MAX_ANNOUNCE_SENTENCES, sentences.length - 1);
   const shuffledSentences = shuffle(sentences);
@@ -105,7 +106,7 @@ const getRandomCategories = (categories) => {
 };
 
 const getPublications = (count) => (
-  Array(count).fill({}).map(() => {
+  [...Array(count)].map(() => {
     const title = getRandomElement(TITLES);
     const createdDate = getRandomeDate();
     const {announce, fullText} = getAnnounceAndFullText(SENTENCES);
@@ -127,10 +128,13 @@ module.exports = {
     const [count] = args;
     let countPublications = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
+    if (countPublications <= 0) {
+      return console.log(`Параметр <count> не может быть отрицательным`);
+    }
+
     if (countPublications > MAX_COUNT) {
       return console.log(`Не больше ${MAX_COUNT} публикаций`);
     }
-
     const publications = getPublications(countPublications);
 
     fs.writeFile(FILE_NAME, JSON.stringify(publications, null, `  `), (err) => {
