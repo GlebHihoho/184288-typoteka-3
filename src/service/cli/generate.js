@@ -1,6 +1,7 @@
 'use strict';
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
+const chalk = require(`chalk`);
 const random = require(`lodash/random`);
 const now = require(`lodash/now`);
 const take = require(`lodash/take`);
@@ -78,7 +79,7 @@ const getRandomeDate = () => {
   return new Date(randomTimestamp).toLocaleString();
 };
 
-const shuffle = (someArray) => {
+const shuffleArray = (someArray) => {
   for (let i = someArray.length - 1; i > 0; i--) {
     const randomPosition = Math.floor(Math.random() * i);
     [someArray[i], someArray[randomPosition]] = [someArray[randomPosition], someArray[i]];
@@ -90,7 +91,7 @@ const shuffle = (someArray) => {
 const getAnnounceAndFullText = (sentences) => {
   const announceSentences = random(1, MAX_ANNOUNCE_SENTENCES);
   const fullTextSentences = random(MAX_ANNOUNCE_SENTENCES, sentences.length - 1);
-  const shuffledSentences = shuffle(sentences);
+  const shuffledSentences = shuffleArray(sentences);
   const announce = take(shuffledSentences, announceSentences);
   const fullText = take(shuffledSentences, fullTextSentences);
 
@@ -99,7 +100,7 @@ const getAnnounceAndFullText = (sentences) => {
 
 const getRandomCategories = (categories) => {
   const randomLength = random(1, categories.length - 1);
-  const shuffledCategories = shuffle(categories);
+  const shuffledCategories = shuffleArray(categories);
   const preparedCategories = take(shuffledCategories, randomLength);
 
   return preparedCategories;
@@ -124,29 +125,30 @@ const getPublications = (count) => (
 
 module.exports = {
   name: `--generate`,
-  run: (args) => {
+  run: async (args) => {
     const [count] = args;
     let countPublications = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     if (countPublications <= 0) {
-      return console.log(`Параметр <count> не может быть отрицательным`);
+      console.log(chalk.red(`Параметр <count> не может быть отрицательным`));
+      return process.exit(EXIT_CODE.ERROR);
     }
 
     if (countPublications > MAX_COUNT) {
-      return console.log(`Не больше ${MAX_COUNT} публикаций`);
+      console.log(chalk.red(`Не больше ${MAX_COUNT} публикаций`));
+      return process.exit(EXIT_CODE.ERROR);
     }
+
     const publications = getPublications(countPublications);
+    const preparedPublications = JSON.stringify(publications, null, `  `);
 
-    fs.writeFile(FILE_NAME, JSON.stringify(publications, null, `  `), (err) => {
-      if (err) {
-        console.error(`Can't write data to file...`);
-        return process.exit(EXIT_CODE.ERROR);
-      }
-
-      console.info(`Operation success. File created.`);
+    try {
+      await fs.writeFile(FILE_NAME, preparedPublications);
+      console.log(chalk.green(`Операция выполнена успешно. Файл был создан.`));
       return process.exit(EXIT_CODE.SUCCESS);
-    });
-
-    return publications;
+    } catch (error) {
+      console.error(chalk.red(`Не могу записать данные в файл...`));
+      return process.exit(EXIT_CODE.ERROR);
+    }
   },
 };
