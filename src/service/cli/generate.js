@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require(`fs`).promises;
+const {nanoid} = require(`nanoid`);
 const chalk = require(`chalk`);
 const random = require(`lodash/random`);
 const now = require(`lodash/now`);
@@ -13,6 +14,7 @@ const {
 const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
 const FILE_CATEGORIES_PATH = `./data/categories.txt`;
+const FILE_COMMENTS_PATH = `./data/comments.txt`;
 
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
@@ -72,19 +74,31 @@ const getRandomCategories = (categories) => {
   return preparedCategories;
 };
 
-const getPublications = (count, titles, sentences, categories) => (
+const getComments = (comments) => {
+  const randomLength = random(1, comments.length - 1);
+  const shuffledComments = shuffleArray(comments);
+  const preparedComments = take(shuffledComments, randomLength).map((comment) => ({id: nanoid(6), text: comment}));
+
+  return preparedComments;
+};
+
+const getPublications = (count, titles, sentences, categories, comments) => (
   [...Array(count)].map(() => {
     const title = getRandomElement(titles);
     const createdDate = getRandomeDate();
     const {announce, fullText} = getAnnounceAndFullText(sentences);
     const сategory = getRandomCategories(categories);
+    const preparedComments = getComments(comments);
+    const id = nanoid(6);
 
     return {
+      id,
       title,
       announce,
       fullText,
       сategory,
       createdDate,
+      comments: preparedComments,
     };
   })
 );
@@ -108,8 +122,9 @@ module.exports = {
     const titles = await readContent(FILE_TITLES_PATH);
     const sentences = await readContent(FILE_SENTENCES_PATH);
     const categories = await readContent(FILE_CATEGORIES_PATH);
+    const comments = await readContent(FILE_COMMENTS_PATH);
 
-    const publications = getPublications(countPublications, titles, sentences, categories);
+    const publications = getPublications(countPublications, titles, sentences, categories, comments);
     const preparedPublications = JSON.stringify(publications, null, `  `);
 
     try {
