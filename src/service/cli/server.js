@@ -1,24 +1,14 @@
 'use strict';
 
 const express = require(`express`);
-const {Router} = require(`express`);
-const fs = require(`fs`).promises;
+const bodyParser = require(`body-parser`);
 const chalk = require(`chalk`);
 
 const DEFAULT_PORT = 3000;
-const FILENAME = `mocks.json`;
 
-const routes = new Router();
-
-routes.get(`/`, async (req, res) => {
-  try {
-    const fileContent = await fs.readFile(FILENAME);
-    const mocks = JSON.parse(fileContent);
-    res.send(mocks);
-  } catch (err) {
-    res.send([]);
-  }
-});
+const articlesRoute = require(`./routes/articles`);
+const categoriesRoute = require(`./routes/categories`);
+const searchRoute = require(`./routes/search`);
 
 module.exports = {
   name: `--server`,
@@ -32,7 +22,13 @@ module.exports = {
 
     const app = express();
 
-    app.use(`/posts`, routes);
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: false}));
+
+    app.use(`/articles`, articlesRoute);
+    app.use(`/categories`, categoriesRoute);
+    app.use(`/search`, searchRoute);
+
     app.use((err, req, res, _) => {
       res
         .status(500)
