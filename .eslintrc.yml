@@ -6,3 +6,9 @@ env:
   node: true
 
 extends: 'htmlacademy/node'
+
+overrides:
+  excludedFiles: '*.test.js'
+
+ignorePatterns:
+  '**/express/public/**/*.js'

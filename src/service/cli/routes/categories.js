@@ -17,7 +17,7 @@ const readMocks = async () => {
   }
 };
 
-categoriesRoute.get(`/`, async (req, res) => {
+categoriesRoute.get(`/`, async (_req, res) => {
   const categories = await readMocks();
 
   return res.send(categories);

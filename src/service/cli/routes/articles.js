@@ -2,7 +2,7 @@
 
 const fs = require(`fs`).promises;
 const {Router} = require(`express`);
-const nanoid = require(`nanoid`);
+const {nanoid} = require(`nanoid`);
 const get = require(`lodash/get`);
 const find = require(`lodash/find`);
 const findIndex = require(`lodash/findIndex`);
@@ -25,7 +25,7 @@ const readMocks = async () => {
   }
 };
 
-articlesRoute.get(`/`, async (req, res) => {
+articlesRoute.get(`/`, async (_req, res) => {
   const articles = await readMocks();
 
   return res.send(articles);
@@ -36,6 +36,10 @@ articlesRoute.get(`/:articleId`, async (req, res) => {
   const id = req.params.articleId;
   const article = find(articles, [`id`, id]);
 
+  if (!article) {
+    return res.status(HTTP_CODE.NOT_FOUND).send(`Article not found`);
+  }
+
   return res.send(article);
 });
 
@@ -43,15 +47,16 @@ articlesRoute.post(`/`, async (req, res) => {
   const article = req.body;
   const articleKeys = Object.keys(article);
   const isValid = articleFields.every((field) => articleKeys.includes(field));
+  const id = nanoid(6);
 
   if (isValid) {
     const articles = await readMocks();
-    articles.push({...article, id: nanoid(6)});
+    articles.push({...article, id});
     const preparedArticles = JSON.stringify(articles, null, `  `);
 
     try {
       await fs.writeFile(FILE_NAME, preparedArticles);
-      return res.send(article);
+      return res.send({...article, id});
     } catch (error) {
       return res.status(HTTP_CODE.INTERNAL_SERVER_ERROR).send(`Something went wrong`);
     }
@@ -120,8 +125,8 @@ articlesRoute.delete(`/:articleId/comments/:commentId`, async (req, res) => {
 
   const articles = await readMocks();
   const article = find(articles, [`id`, articleId]);
-  const comment = find((article.comments, [`id`, commentId]));
-  const offerIndex = findIndex(article, [`id`, articleId]);
+  const comment = find(article.comments, [`id`, commentId]);
+  const articleIndex = findIndex(articles, [`id`, articleId]);
 
   if (!article && !comment) {
     return res.status(HTTP_CODE.NOT_FOUND).send(`Offer not found`);
@@ -129,7 +134,7 @@ articlesRoute.delete(`/:articleId/comments/:commentId`, async (req, res) => {
 
   try {
     article.comments = article.comments.filter((item) => item.id !== commentId);
-    articles[offerIndex].comments = article.comments;
+    articles[articleIndex].comments = article.comments;
     const preparedArticles = JSON.stringify(articles, null, `  `);
     await fs.writeFile(FILE_NAME, preparedArticles);
   } catch (error) {
