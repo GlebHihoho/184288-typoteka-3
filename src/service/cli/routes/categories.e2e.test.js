@@ -29,9 +29,4 @@ describe(`Categories API end-points`, () => {
     const res = await request(server).get(`/categories`);
     expect(res.body).toEqual(categories);
   });
-
-  test(`API returns 400 when url string is wrong`, async () => {
-    const res = await request(server).get(`/categories1`);
-    expect(res.statusCode).toBe(HTTP_CODE.NOT_FOUND);
-  });
 });

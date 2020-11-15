@@ -2,6 +2,7 @@
 
 const fs = require(`fs`).promises;
 const {Router} = require(`express`);
+const {HTTP_CODE} = require(`../../../constants`);
 
 const searchRoute = new Router();
 
@@ -21,7 +22,12 @@ searchRoute.get(`/`, async (req, res) => {
   const offers = await readMocks();
   const {query} = req.query;
 
+  if (!query) {
+    return res.status(HTTP_CODE.NOT_FOUND).send(`Something went wrong`);
+  }
+
   const response = offers.filter((offer) => offer.title.indexOf(query) !== -1);
+
   return res.send(response);
 });
 

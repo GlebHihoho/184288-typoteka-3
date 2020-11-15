@@ -6,7 +6,7 @@ const chalk = require(`chalk`);
 const random = require(`lodash/random`);
 const now = require(`lodash/now`);
 const take = require(`lodash/take`);
-
+const {logger} = require(`../lib/logger`);
 const {
   EXIT_CODE,
 } = require(`../../constants`);
@@ -51,7 +51,7 @@ const readContent = async (filePath) => {
     const content = await fs.readFile(filePath, `utf8`);
     return content.split(`\n`);
   } catch (err) {
-    console.error(chalk.red(err));
+    logger.error(chalk.red(err));
     return [];
   }
 };
@@ -110,12 +110,12 @@ module.exports = {
     let countPublications = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     if (countPublications <= 0) {
-      console.log(chalk.red(`Параметр <count> не может быть отрицательным`));
+      logger.error(chalk.red(`Параметр <count> не может быть отрицательным`));
       return process.exit(EXIT_CODE.ERROR);
     }
 
     if (countPublications > MAX_COUNT) {
-      console.log(chalk.red(`Не больше ${MAX_COUNT} публикаций`));
+      logger.error(chalk.red(`Не больше ${MAX_COUNT} публикаций`));
       return process.exit(EXIT_CODE.ERROR);
     }
 
@@ -129,10 +129,10 @@ module.exports = {
 
     try {
       await fs.writeFile(FILE_NAME, preparedPublications);
-      console.log(chalk.green(`Операция выполнена успешно. Файл был создан.`));
+      logger.info(chalk.green(`Operation success. File created.`));
       return process.exit(EXIT_CODE.SUCCESS);
     } catch (error) {
-      console.error(chalk.red(`Не могу записать данные в файл...`));
+      logger.error(chalk.red(`Can't write data to file...`));
       return process.exit(EXIT_CODE.ERROR);
     }
   },

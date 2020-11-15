@@ -1,6 +1,7 @@
 'use strict';
 
 const chalk = require(`chalk`);
+const {logger} = require(`../lib/logger`);
 
 module.exports = {
   name: `--help`,
@@ -16,6 +17,6 @@ module.exports = {
       --server <port>             запускае сервер для указанного порта
     `;
 
-    console.log(chalk.gray(text));
+    logger.info(chalk.gray(text));
   }
 };
