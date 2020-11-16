@@ -48,7 +48,7 @@ articlesRoute.post(`/`, async (req, res) => {
   const articleKeys = Object.keys(article);
   const isValid = articleFields.every((field) => articleKeys.includes(field));
   const id = nanoid(6);
-
+  console.log(`id - ${id}`);
   if (isValid) {
     const articles = await readMocks();
     articles.push({...article, id});

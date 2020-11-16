@@ -20,9 +20,9 @@ const createServer = () => {
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({extended: false}));
 
-  server.use(`/articles`, articlesRoute);
-  server.use(`/categories`, categoriesRoute);
-  server.use(`/search`, searchRoute);
+  server.use(`/api/articles`, articlesRoute);
+  server.use(`/api/categories`, categoriesRoute);
+  server.use(`/api/search`, searchRoute);
 
   server.use((req, res) => {
     res.status(HTTP_CODE.NOT_FOUND).send(`Not found`);

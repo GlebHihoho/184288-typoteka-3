@@ -1,17 +1,23 @@
 'use strict';
 
 const {Router} = require(`express`);
+const api = require(`../api`);
 
 const mainRoute = new Router();
 
-const pageContent = {
-  title: `Главная страница`,
-  bodyStyle: ``,
-  divClass: `wrapper`,
-  header: `loggedOff`,
-};
+mainRoute.get(`/`, async (_req, res) => {
+  const categories = await api.getCategories();
+  const articles = await api.getArticles();
 
-mainRoute.get(`/`, (req, res) => {
+  const pageContent = {
+    title: `Главная страница`,
+    bodyStyle: ``,
+    divClass: `wrapper`,
+    header: `loggedOff`,
+    categories,
+    articles,
+  };
+
   res.render(`pages/main`, pageContent);
 });
 
