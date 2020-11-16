@@ -2,8 +2,10 @@
 
 const fs = require(`fs`).promises;
 const {Router} = require(`express`);
+const {getLogger} = require(`../../lib/logger`);
 
 const categoriesRoute = new Router();
+const logger = getLogger();
 
 const FILE_NAME = `data/categories.txt`;
 
@@ -13,13 +15,14 @@ const readMocks = async () => {
     const mocks = fileContent.split(`\n`);
     return mocks;
   } catch (err) {
+    logger.error(`Error occurs: ${err}`);
     return [];
   }
 };
 
-categoriesRoute.get(`/`, async (_req, res) => {
+categoriesRoute.get(`/`, async (req, res) => {
   const categories = await readMocks();
-
+  logger.debug(`${req.method} ${req.originalUrl} -- res status code ${res.statusCode}`);
   return res.send(categories);
 });
 

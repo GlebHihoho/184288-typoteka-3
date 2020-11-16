@@ -1,9 +1,10 @@
 'use strict';
 
 const request = require(`supertest`);
+const {find} = require(`lodash`);
 
 const serverApi = require(`../server`);
-const {initializeMockData, clearMockData} = require(`../../../utils/prepareMockData`);
+const {initializeMockData, clearMockData, mockData} = require(`../../../utils/prepareMockData`);
 const {HTTP_CODE} = require(`../../../constants`);
 
 let server;
@@ -30,7 +31,8 @@ describe(`Search API end-points`, () => {
 
   test(`Offer has correct id`, async () => {
     const res = await request(server).get(`/search`).query({query: `Асинхронность`});
-    expect(res.body[0].id).toBe(`DqYYpe`);
+    const article = find(mockData, [`id`, `DqYYpe`]);
+    expect(res.body[0]).toEqual(article);
   });
 
   test(`API returns empty array if nothing is found`, async () => {

@@ -1,7 +1,7 @@
 'use strict';
 
 const request = require(`supertest`);
-const find = require(`lodash/find`);
+const {find, map} = require(`lodash`);
 
 const serverApi = require(`../server`);
 const {initializeMockData, clearMockData, mockData} = require(`../../../utils/prepareMockData`);
@@ -73,11 +73,12 @@ describe(`Articles API end-points`, () => {
     expect(res.statusCode).toBe(HTTP_CODE.OK);
   });
 
-  test(`When get article by ID data should be contain following keys`, async () => {
+  test(`When get article by ID data should be equal mockData`, async () => {
     const id = `DqYYpe`;
     const res = await request(server).get(`/articles/${id}`);
     articleKeys.forEach((key) => expect(res.body).toHaveProperty(key));
-    expect(res.body.id).toBe(id);
+    const article = find(mockData, [`id`, id]);
+    expect(res.body).toEqual(article);
   });
 
   let articleId;
@@ -88,13 +89,15 @@ describe(`Articles API end-points`, () => {
     const postArticleRes = await request(server).post(`/articles`).send(postArticlesData);
     articleId = postArticleRes.body.id;
     const newRes = await request(server).get(`/articles`);
+    const createdArticleRes = await request(server).get(`/articles/${articleId}`);
     const newAmount = newRes.body.length;
     expect(newAmount).toBe(initAmount + 1);
+    expect(createdArticleRes.body).toEqual({...postArticlesData, id: articleId});
   });
 
   test(`GET. Check get article by ID`, async () => {
     const res = await request(server).get(`/articles/${articleId}`);
-    expect(res.body.title).toBe(postArticlesData.title);
+    expect(res.body).toEqual({...postArticlesData, id: articleId});
   });
 
   test(`PUT. Check that article was changed`, async () => {
@@ -130,11 +133,14 @@ describe(`Articles API end-points`, () => {
   });
 
   test(`DELETE. Check that comment was removed by ID`, async () => {
+    const commentId = `p9zkKq`;
     const initCommentsRes = await request(server).get(`/articles/wo_O42/comments`);
-    const deleteRes = await request(server).delete(`/articles/wo_O42/comments/p9zkKq`);
+    const deleteRes = await request(server).delete(`/articles/wo_O42/comments/${commentId}`);
     expect(deleteRes.statusCode).toBe(HTTP_CODE.OK);
     const updateCommentsRes = await request(server).get(`/articles/wo_O42/comments`);
     expect(initCommentsRes.body.length).toBe(updateCommentsRes.body.length + 1);
+    const commentIds = map(updateCommentsRes.body, `id`);
+    expect(commentIds).not.toContain(commentId);
   });
 
   test(`POST. Check that comment was created`, async () => {
