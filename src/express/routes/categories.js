@@ -1,6 +1,7 @@
 'use strict';
 
 const {Router} = require(`express`);
+const api = require(`../api`);
 
 const categoriesRoute = new Router();
 
@@ -11,8 +12,9 @@ const pageContent = {
   header: `search`,
 };
 
-categoriesRoute.get(`/`, (req, res) => {
-  return res.render(`pages/all-categories`, pageContent);
+categoriesRoute.get(`/`, async (_req, res) => {
+  const categories = await api.getCategories();
+  return res.render(`pages/all-categories`, {...pageContent, categories});
 });
 
 module.exports = categoriesRoute;

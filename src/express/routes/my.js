@@ -1,6 +1,7 @@
 'use strict';
 
 const {Router} = require(`express`);
+const api = require(`../api`);
 
 const myRoute = new Router();
 
@@ -11,12 +12,17 @@ const pageContent = {
   header: `search`,
 };
 
-myRoute.get(`/`, (req, res) => {
-  pageContent.title = `Публикации`;
-  return res.render(`pages/my`, pageContent);
+myRoute.get(`/`, async (_req, res) => {
+  const articles = await api.getArticles();
+
+  return res.render(`pages/my`, {
+    ...pageContent,
+    title: `Публикации`,
+    articles,
+  });
 });
 
-myRoute.get(`/comments`, (req, res) => {
+myRoute.get(`/comments`, async (_req, res) => {
   pageContent.title = `Комментарии`;
   return res.render(`pages/comments`, pageContent);
 });

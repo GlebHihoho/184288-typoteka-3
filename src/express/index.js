@@ -12,6 +12,8 @@ const searchRoute = require(`./routes/search`);
 const categoriesRoute = require(`./routes/categories`);
 
 const DEFAULT_PORT = 8080;
+const PUBLIC_DIR = `../../public`;
+const UPLOAD_DIR = `../../upload`;
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.set(`views`, path.join(__dirname, `templates`));
 app.set(`view engine`, `pug`);
 
 app.use(express.static(path.join(__dirname, `templates`)));
+app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
+app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
 
 app.use(`/`, mainRoute);
 app.use(`/my`, myRoute);
