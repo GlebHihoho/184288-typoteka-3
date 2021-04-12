@@ -6,7 +6,7 @@ const path = require(`path`);
 const {nanoid} = require(`nanoid`);
 const api = require(`../api`);
 
-const UPLOAD_DIR = `../upload/img/`;
+const UPLOAD_DIR = `../../../upload`;
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 
 const articlesRoute = new Router();
@@ -40,7 +40,7 @@ articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
   const {body, file} = req;
   const articleData = body;
   articleData[`picture`] = file.filename;
-  console.log(articleData);
+
   try {
     await api.createArticle(articleData);
     res.redirect(`/my`);

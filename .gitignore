@@ -17,4 +17,4 @@ mocks.json
 build/
 
 # Директория с загруженными изображениями
-src/express/upload/img/*.*
+upload/*.*

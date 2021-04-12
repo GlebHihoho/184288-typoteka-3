@@ -12,8 +12,8 @@ const searchRoute = require(`./routes/search`);
 const categoriesRoute = require(`./routes/categories`);
 
 const DEFAULT_PORT = 8080;
-const PUBLIC_DIR = `public`;
-const UPLOAD_DIR = `upload`;
+const PUBLIC_DIR = `../../public`;
+const UPLOAD_DIR = `../../upload`;
 
 const app = express();
 

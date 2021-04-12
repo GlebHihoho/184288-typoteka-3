@@ -24,7 +24,6 @@ myRoute.get(`/`, async (_req, res) => {
 
 myRoute.get(`/comments`, async (_req, res) => {
   pageContent.title = `Комментарии`;
-  // const comments = await api.get
   return res.render(`pages/comments`, pageContent);
 });
 
