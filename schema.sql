@@ -8,7 +8,7 @@ GRANT ALL ON DATABASE typoteka TO admin;
 
 CREATE TABLE categories(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name varchar(30) NOT NULL
+  name varchar(30) UNIQUE NOT NULL
 );
 
 CREATE TABLE users(
@@ -33,6 +33,7 @@ CREATE TABLE articles(
 );
 
 CREATE INDEX ON articles (title);
+CREATE INDEX ON articles (userId);
 
 CREATE TABLE articles_categories(
   articleId integer NOT NULL,
@@ -45,6 +46,9 @@ CREATE TABLE articles_categories(
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+CREATE INDEX ON articles_categories (userId);
+CREATE INDEX ON articles_categories (categoryId);
 
 CREATE TABLE comments(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -59,3 +63,6 @@ CREATE TABLE comments(
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+CREATE INDEX ON comments (userId);
+CREATE INDEX ON comments (articleId);
