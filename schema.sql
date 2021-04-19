@@ -22,8 +22,9 @@ CREATE TABLE users(
 
 CREATE TABLE articles(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  title varchar(255) NOT NULL,
-  fullText varchar(255),
+  title varchar(250) NOT NULL,
+  preview varchar(250) NOT NULL,
+  fullText varchar(1000),
   image varchar(50),
   userId integer NOT NULL,
   createdAt timestamp DEFAULT current_timestamp,
@@ -47,7 +48,7 @@ CREATE TABLE articles_categories(
     ON UPDATE CASCADE
 );
 
-CREATE INDEX ON articles_categories (userId);
+CREATE INDEX ON articles_categories (articleId);
 CREATE INDEX ON articles_categories (categoryId);
 
 CREATE TABLE comments(

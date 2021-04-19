@@ -14,7 +14,6 @@ const FILE_COMMENTS_PATH = `./data/comments.txt`;
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
 const FILE_NAME = `fill-db-generate.sql`;
-const MAX_ANNOUNCE_SENTENCES = 2;
 
 const USERS = [
   {
@@ -59,14 +58,13 @@ const readContent = async (filePath) => {
   }
 };
 
-const getTitleAndFullArticleText = (sentences) => {
-  const titleSentences = random(1, MAX_ANNOUNCE_SENTENCES);
-  const fullTextSentences = random(MAX_ANNOUNCE_SENTENCES, 3);
+const getArticleText = (sentences) => {
   const shuffledSentences = shuffleArray(sentences);
-  const title = take(shuffledSentences, titleSentences);
-  const fullText = take(shuffledSentences, fullTextSentences);
+  const title = take(shuffledSentences, 1);
+  const preview = take(shuffledSentences, 2);
+  const fullText = take(shuffledSentences, 3);
 
-  return {title, fullText};
+  return {title, preview, fullText};
 };
 
 const getComments = (comments, usersCount, articleId) => {
@@ -86,7 +84,7 @@ const getComments = (comments, usersCount, articleId) => {
 
 const getArticles = (count, sentences, categories, comments, users) => (
   [...Array(count)].map((_, index) => {
-    const {title, fullText} = getTitleAndFullArticleText(sentences);
+    const {title, preview, fullText} = getArticleText(sentences);
     const сategory = random(1, categories.length - 1);
     const preparedComments = getComments(comments, users.length - 1, index + 1);
 
@@ -94,6 +92,7 @@ const getArticles = (count, sentences, categories, comments, users) => (
       title,
       fullText,
       сategory,
+      preview,
       image: `image${index}.png`,
       comments: preparedComments,
       userId: random(1, users.length - 1),
@@ -107,7 +106,7 @@ const getContent = (userValues, categoryValues, articleValues, articleCategoryVa
   INSERT INTO categories(name) VALUES ${categoryValues};
 
   ALTER TABLE articles DISABLE TRIGGER ALL;
-  INSERT INTO articles(title, fullText, image, userId) VALUES ${articleValues};
+  INSERT INTO articles(title, preview, fullText, image, userId) VALUES ${articleValues};
   ALTER TABLE articles ENABLE TRIGGER ALL;
 
   ALTER TABLE articles_categories DISABLE TRIGGER ALL;
@@ -152,8 +151,8 @@ module.exports = {
     const articleCategory = articles.map((article, index) => ({articleId: index + 1, categoryId: article.сategory}));
     const articleCategoryValues = articleCategory.map(({articleId, categoryId}) =>`(${articleId}, ${categoryId})`).join(`,\n`);
 
-    const articleValues = articles.map(({title, fullText, image, userId}) =>
-      `('${title}', '${fullText}', '${image}', ${userId})`).join(`,\n`);
+    const articleValues = articles.map(({title, preview, fullText, image, userId}) =>
+      `('${title}', '${preview}', '${fullText}', '${image}', ${userId})`).join(`,\n`);
 
     const content = getContent(userValues, categoryValues, articleValues, articleCategoryValues, commentValues);
 

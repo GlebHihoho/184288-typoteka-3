@@ -22,11 +22,11 @@ INSERT INTO categories(name)
 
 ALTER TABLE articles DISABLE TRIGGER ALL;
 
-INSERT INTO articles(title, fullText, image, userId)
+INSERT INTO articles(title, preview, fullText, image, userId)
   VALUES
-    ('PostgreSQL', 'PostgreSQL и node.js...', 'image1.jpg', 1),
-    ('Лучше рок-музыканты', 'Лучше рок-музыканты 20-века...', 'image1.jpg', 2),
-    ('Самый лучший музыкальный альбом', 'Самый лучший музыкальный альбом этого года...', 'image1.jpg', 3);
+    ('PostgreSQL', 'PostgreSQL...', 'PostgreSQL и node.js...', 'image1.jpg', 1),
+    ('Лучше рок-музыканты', 'Лучше...', 'Лучше рок-музыканты 20-века...', 'image1.jpg', 2),
+    ('Самый лучший музыкальный альбом', 'Самый...', 'Самый лучший музыкальный альбом этого года...', 'image1.jpg', 3);
 
 ALTER TABLE articles ENABLE TRIGGER ALL;
 
