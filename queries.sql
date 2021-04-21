@@ -6,14 +6,14 @@ SELECT id, name FROM categories;
 
 SELECT id, name FROM categories
   INNER JOIN articles_categories
-  ON categories.id = categoryId
+  ON categories.id = category_id
   GROUP BY id;
 
 -- 3. Получить список категорий с количеством публикаций (идентификатор, наименование категории, количество публикаций в категории);
 
-SELECT id, name, count(articleId) FROM categories
+SELECT id, name, count(article_id) FROM categories
   INNER JOIN articles_categories
-  ON categories.id = categoryId
+  ON categories.id = category_id
   GROUP BY id;
 
 -- 4. Получить список публикаций (идентификатор публикации, заголовок публикации, анонс публикации, дата публикации,
@@ -23,56 +23,56 @@ SELECT
   articles.id,
   articles.title,
   articles.preview,
-  articles.createdAt,
-  users.firstName,
-  users.lastName,
+  articles.created_at,
+  users.first_name,
+  users.last_name,
   users.email,
-  count(comments.id) as commentsCount,
-  STRING_AGG(DISTINCT categories.name, ', ') AS categoryList
+  count(comments.id) as comments_count,
+  STRING_AGG(DISTINCT categories.name, ', ') AS category_list
 FROM articles
-  INNER JOIN users ON users.id = articles.userId
-  LEFT JOIN comments ON comments.articleId = articles.id
-  INNER JOIN articles_categories ON articles.id = articles_categories.articleId
-  INNER JOIN categories ON articles_categories.categoryId = categories.id
+  INNER JOIN users ON users.id = articles.user_id
+  LEFT JOIN comments ON comments.article_id = articles.id
+  INNER JOIN articles_categories ON articles.id = articles_categories.article_id
+  INNER JOIN categories ON articles_categories.category_id = categories.id
   GROUP BY articles.id, users.id
-  ORDER BY articles.createdAt DESC;
+  ORDER BY articles.created_at DESC;
 
 -- 5. Получить полную информацию определённой публикации (идентификатор публикации, заголовок публикации, анонс,
 -- полный текст публикации, дата публикации, путь к изображению, имя и фамилия автора, контактный email,
 -- количество комментариев, наименование категорий);
 
 SELECT
-    articles.id,
-    articles.title,
-    articles.preview,
-    articles.fullText,
-    articles.createdAt,
-    articles.image,
-    users.firstName,
-    users.lastName,
-    users.email,
-    count(comments.id) as commentsCount,
-    STRING_AGG(DISTINCT categories.name, ', ') AS categoryList
+  articles.id,
+  articles.title,
+  articles.preview,
+  articles.full_text,
+  articles.created_at,
+  articles.image,
+  users.first_name,
+  users.last_name,
+  users.email,
+  count(comments.id) as comments_count,
+  STRING_AGG(DISTINCT categories.name, ', ') AS category_list
 FROM articles
-    INNER JOIN users ON users.id = articles.userId
-    LEFT JOIN comments ON comments.articleId = articles.id
-    INNER JOIN articles_categories ON articles.id = articles_categories.articleId
-    INNER JOIN categories ON articles_categories.categoryId = categories.id
+  INNER JOIN users ON users.id = articles.user_id
+  LEFT JOIN comments ON comments.article_id = articles.id
+  INNER JOIN articles_categories ON articles.id = articles_categories.article_id
+  INNER JOIN categories ON articles_categories.category_id = categories.id
 WHERE articles.id = 1
-    GROUP BY articles.id, users.id;
+  GROUP BY articles.id, users.id;
 
 -- 6. Получить список из 5 свежих комментариев (идентификатор комментария, идентификатор публикации,
 -- имя и фамилия автора, текст комментария);
 
 SELECT
   comments.id,
-  comments.articleId,
-  users.firstName,
-  users.lastName,
+  comments.article_id,
+  users.first_name,
+  users.last_name,
   comments.text
 FROM comments
-  INNER JOIN users ON comments.userId = users.id
-  ORDER BY comments.createdAt DESC
+  INNER JOIN users ON comments.user_id = users.id
+  ORDER BY comments.created_at DESC
   LIMIT 5;
 
 -- 7. Получить список комментариев для определённой публикации (идентификатор комментария,
@@ -80,14 +80,14 @@ FROM comments
 
 SELECT
   comments.id,
-  comments.articleId,
-  users.firstName,
-  users.lastName,
+  comments.article_id,
+  users.first_name,
+  users.last_name,
   comments.text
 FROM comments
-  INNER JOIN users ON comments.userId = users.id
-WHERE comments.articleId = 1
-  ORDER BY comments.createdAt DESC;
+  INNER JOIN users ON comments.user_id = users.id
+WHERE comments.article_id = 1
+  ORDER BY comments.created_at DESC;
 
 -- 8. Обновить заголовок определённой публикации на «Как я встретил Новый год»;
 
