@@ -15,8 +15,8 @@ CREATE TABLE users(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   email varchar(255) UNIQUE NOT NULL,
   password varchar(255) NOT NULL,
-  firstName varchar(255) NOT NULL,
-  lastName varchar(255) NOT NULL,
+  first_name varchar(255) NOT NULL,
+  last_name varchar(255) NOT NULL,
   avatar varchar(50) NOT NULL
 );
 
@@ -24,46 +24,46 @@ CREATE TABLE articles(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   title varchar(250) NOT NULL,
   preview varchar(250) NOT NULL,
-  fullText varchar(1000),
+  full_text varchar(1000),
   image varchar(50),
-  userId integer NOT NULL,
-  createdAt timestamp DEFAULT current_timestamp,
-  FOREIGN KEY (userId) REFERENCES users(id)
+  user_id integer NOT NULL,
+  created_at timestamp DEFAULT current_timestamp,
+  FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE SET NULL
     ON UPDATE SET NULL
 );
 
 CREATE INDEX ON articles (title);
-CREATE INDEX ON articles (userId);
+CREATE INDEX ON articles (user_id);
 
 CREATE TABLE articles_categories(
-  articleId integer NOT NULL,
-  categoryId integer NOT NULL,
-  PRIMARY KEY (articleId, categoryId),
-  FOREIGN KEY (articleId) REFERENCES articles(id)
+  article_id integer NOT NULL,
+  category_id integer NOT NULL,
+  PRIMARY KEY (article_id, category_id),
+  FOREIGN KEY (article_id) REFERENCES articles(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  FOREIGN KEY (categoryId) REFERENCES categories(id)
+  FOREIGN KEY (category_id) REFERENCES categories(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
-CREATE INDEX ON articles_categories (articleId);
-CREATE INDEX ON articles_categories (categoryId);
+CREATE INDEX ON articles_categories (article_id);
+CREATE INDEX ON articles_categories (category_id);
 
 CREATE TABLE comments(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   text text NOT NULL,
-  articleId integer NOT NULL,
-  userId integer NOT NULL,
-  createdAt timestamp DEFAULT current_timestamp,
-  FOREIGN KEY (userId) REFERENCES users(id)
+  article_id integer NOT NULL,
+  user_id integer NOT NULL,
+  created_at timestamp DEFAULT current_timestamp,
+  FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  FOREIGN KEY (articleId) REFERENCES articles(id)
+  FOREIGN KEY (article_id) REFERENCES articles(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
-CREATE INDEX ON comments (userId);
-CREATE INDEX ON comments (articleId);
+CREATE INDEX ON comments (user_id);
+CREATE INDEX ON comments (article_id);
