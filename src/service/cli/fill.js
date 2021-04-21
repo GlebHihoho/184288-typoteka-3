@@ -101,20 +101,20 @@ const getArticles = (count, sentences, categories, comments, users) => (
 );
 
 const getContent = (userValues, categoryValues, articleValues, articleCategoryValues, commentValues) => (`
-  INSERT INTO users(email, password, firstName, lastName, avatar) VALUES ${userValues};
+  INSERT INTO users(email, password, first_name, last_name, avatar) VALUES ${userValues};
 
   INSERT INTO categories(name) VALUES ${categoryValues};
 
   ALTER TABLE articles DISABLE TRIGGER ALL;
-  INSERT INTO articles(title, preview, fullText, image, userId) VALUES ${articleValues};
+  INSERT INTO articles(title, preview, full_text, image, user_id) VALUES ${articleValues};
   ALTER TABLE articles ENABLE TRIGGER ALL;
 
   ALTER TABLE articles_categories DISABLE TRIGGER ALL;
-  INSERT INTO articles_categories(articleId, categoryId) VALUES ${articleCategoryValues};
+  INSERT INTO articles_categories(article_id, category_id) VALUES ${articleCategoryValues};
   ALTER TABLE articles_categories ENABLE TRIGGER ALL;
 
   ALTER TABLE comments DISABLE TRIGGER ALL;
-  INSERT INTO comments(text, userId, articleId) VALUES ${commentValues};
+  INSERT INTO comments(text, user_id, article_id) VALUES ${commentValues};
   ALTER TABLE comments ENABLE TRIGGER ALL;
 `);
 
