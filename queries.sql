@@ -5,15 +5,15 @@ SELECT id, name FROM categories;
 -- 2. Получить список категорий для которых создана минимум одна публикация (идентификатор, наименование категории);
 
 SELECT id, name FROM categories
-  JOIN articles_categories
-  ON id = categoryId
+  INNER JOIN articles_categories
+  ON categories.id = categoryId
   GROUP BY id;
 
 -- 3. Получить список категорий с количеством публикаций (идентификатор, наименование категории, количество публикаций в категории);
 
 SELECT id, name, count(articleId) FROM categories
-  JOIN articles_categories
-  ON id = categoryId
+  INNER JOIN articles_categories
+  ON categories.id = categoryId
   GROUP BY id;
 
 -- 4. Получить список публикаций (идентификатор публикации, заголовок публикации, анонс публикации, дата публикации,
@@ -30,10 +30,10 @@ SELECT
   count(comments.id) as commentsCount,
   STRING_AGG(DISTINCT categories.name, ', ') AS categoryList
 FROM articles
-  JOIN users ON users.id = articles.userId
+  INNER JOIN users ON users.id = articles.userId
   LEFT JOIN comments ON comments.articleId = articles.id
-  JOIN articles_categories ON articles.id = articles_categories.articleId
-  JOIN categories ON articles_categories.categoryId = categories.id
+  INNER JOIN articles_categories ON articles.id = articles_categories.articleId
+  INNER JOIN categories ON articles_categories.categoryId = categories.id
   GROUP BY articles.id, users.id
   ORDER BY articles.createdAt DESC;
 
@@ -54,10 +54,10 @@ SELECT
     count(comments.id) as commentsCount,
     STRING_AGG(DISTINCT categories.name, ', ') AS categoryList
 FROM articles
-    JOIN users ON users.id = articles.userId
+    INNER JOIN users ON users.id = articles.userId
     LEFT JOIN comments ON comments.articleId = articles.id
-    JOIN articles_categories ON articles.id = articles_categories.articleId
-    JOIN categories ON articles_categories.categoryId = categories.id
+    INNER JOIN articles_categories ON articles.id = articles_categories.articleId
+    INNER JOIN categories ON articles_categories.categoryId = categories.id
 WHERE articles.id = 1
     GROUP BY articles.id, users.id;
 
@@ -71,7 +71,7 @@ SELECT
   users.lastName,
   comments.text
 FROM comments
-  JOIN users ON comments.userId = users.id
+  INNER JOIN users ON comments.userId = users.id
   ORDER BY comments.createdAt DESC
   LIMIT 5;
 
@@ -85,7 +85,7 @@ SELECT
   users.lastName,
   comments.text
 FROM comments
-  JOIN users ON comments.userId = users.id
+  INNER JOIN users ON comments.userId = users.id
 WHERE comments.articleId = 1
   ORDER BY comments.createdAt DESC;
 
@@ -93,4 +93,4 @@ WHERE comments.articleId = 1
 
 UPDATE articles
   SET title = 'Как я встретил Новый год'
-WHERE id = 1;
+WHERE articles.id = 1;
