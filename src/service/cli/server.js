@@ -5,6 +5,7 @@ const bodyParser = require(`body-parser`);
 
 const {HTTP_CODE} = require(`../../constants`);
 const {getLogger} = require(`../lib/logger`);
+const sequelize = require(`../lib/sequelize`);
 
 const articlesRoute = require(`./routes/articles`);
 const categoriesRoute = require(`./routes/categories`);
@@ -49,6 +50,16 @@ const createServer = () => {
 };
 
 const run = async (args) => {
+  try {
+    logger.info(`Trying to connect to database...`);
+    await sequelize.authenticate();
+  } catch (err) {
+    logger.error(`An error occured: ${err.message}`);
+    return process.exit(1);
+  }
+
+  logger.info(`Connection to database established`);
+
   const [customPort] = args;
   const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
 
