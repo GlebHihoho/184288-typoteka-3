@@ -4,8 +4,18 @@ block content
     section.search-page
       .search-page__wrapper
         h1 Поиск
-        .search.search-page__form
-          form(action='#', method='get')
+        - var notFound = search && result.length === 0
+        div(class={"search": true, "search-page__form": true, "search-page__wrapper--empty": notFound})
+          form(action='/search', autocomplete="off", method='get')
             label
-              input(type='text', placeholder='Что ищем?')
+              input(type='text' name='search' value=search || '' placeholder='Что ищем?' autofocus)
             button.search__button.button.button--transparent(type='submit') Найти
+
+          if result.length > 0
+            each article in result
+              .search__result
+                time.search__date(datetime= article.createdAt)= dayjs(article.createdAt).format('DD.MM.YYYY HH:mm')
+                a.search__link(href=`/articles/${article.id}`) #{article.title}
+
+          if notFound
+            p.search-page__empty Ничего не нашлось

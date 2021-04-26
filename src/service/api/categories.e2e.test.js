@@ -3,8 +3,8 @@
 const request = require(`supertest`);
 
 const serverApi = require(`../server`);
-const {initializeMockData, clearMockData, getCategories} = require(`../../../utils/prepareMockData`);
-const {HTTP_CODE} = require(`../../../constants`);
+const {initializeMockData, clearMockData, getCategories} = require(`../../utils/prepareMockData`);
+const {HTTP_CODE} = require(`../../constants`);
 
 let server;
 let categories;

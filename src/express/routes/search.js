@@ -2,17 +2,29 @@
 
 const {Router} = require(`express`);
 
-const searchRoute = new Router();
+const api = require(`../api`);
 
-const pageContent = {
-  title: `Поиск`,
-  bodyStyle: ``,
-  divClass: `wrapper-color`,
-  header: `search`,
-};
+const route = new Router();
 
-searchRoute.get(`/`, (req, res) => {
+route.get(`/`, async (req, res) => {
+  let result = [];
+
+  try {
+    result = await api.searchArticle(req.query.search);
+  } catch (e) {
+    result = [];
+  }
+
+  const pageContent = {
+    title: `Поиск`,
+    bodyStyle: ``,
+    divClass: `wrapper-color`,
+    header: `search`,
+    search: req.query.search,
+    result,
+  };
+
   res.render(`pages/search`, pageContent);
 });
 
-module.exports = searchRoute;
+module.exports = route;

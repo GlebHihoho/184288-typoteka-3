@@ -6,8 +6,7 @@ const api = require(`../api`);
 const mainRoute = new Router();
 
 mainRoute.get(`/`, async (_req, res) => {
-  const categories = await api.getCategories();
-  const articles = await api.getArticles();
+  const [categories, articles] = await Promise.all([api.getCategories(), api.getArticles()]);
 
   const pageContent = {
     title: `Главная страница`,

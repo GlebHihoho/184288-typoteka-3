@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports.DEFAULT_COMMAND = `--help`;
+module.exports.API_PREFIX = `/api`;
 
 module.exports.USER_ARGV_INDEX = 2;
 
@@ -11,6 +12,7 @@ module.exports.EXIT_CODE = {
 
 module.exports.HTTP_CODE = {
   OK: 200,
+  BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,

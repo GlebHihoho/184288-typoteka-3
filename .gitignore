@@ -10,7 +10,6 @@ Thumbs.db
 # Вспомогательные файлы
 *.log*
 node_modules/
-mocks.json
 *.log
 
 # Папка с собранными файлами проекта
@@ -21,3 +20,5 @@ upload/*.*
 
 # Файл с переменными окружения
 .env
+
+fill-db-generate.sql

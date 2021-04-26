@@ -4,8 +4,8 @@ const request = require(`supertest`);
 const {find} = require(`lodash`);
 
 const serverApi = require(`../server`);
-const {initializeMockData, clearMockData, mockData} = require(`../../../utils/prepareMockData`);
-const {HTTP_CODE} = require(`../../../constants`);
+const {initializeMockData, clearMockData, mockData} = require(`../../utils/prepareMockData`);
+const {HTTP_CODE} = require(`../../constants`);
 
 let server;
 

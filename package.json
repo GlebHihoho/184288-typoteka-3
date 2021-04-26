@@ -6,10 +6,10 @@
   "scripts": {
     "test": "npm run eslint",
     "test::rest": "jest",
-    "start": "cross-env LOG_LEVEL=error node -r dotenv/config ./src/service/service.js --server",
+    "start": "cross-env LOG_LEVEL=error nodemon -r dotenv/config ./src/service/service.js --server",
     "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js --server",
-    "generate": "node ./src/service/service.js --generate 15",
     "fill": "node ./src/service/service.js --fill",
+    "filldb": "node -r dotenv/config ./src/service/service.js --filldb 15",
     "eslint": "eslint --ext .js src/",
     "server": "nodemon ./src/service/service.js --server 3000",
     "express": "nodemon ./src/express"
@@ -37,6 +37,7 @@
     "body-parser": "1.19.0",
     "chalk": "3.0.0",
     "cross-env": "7.0.2",
+    "dayjs": "1.10.4",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "lodash": "4.17.20",
