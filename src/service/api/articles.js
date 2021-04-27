@@ -2,14 +2,13 @@
 
 const {Router} = require(`express`);
 
-const {HTTP_CODE} = require(`../../constants`);
 const {getLogger} = require(`../lib/logger`);
 
 const route = new Router();
 const logger = getLogger();
 
 
-module.exports = (app, articleService) => {
+module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
@@ -18,6 +17,20 @@ module.exports = (app, articleService) => {
     logger.debug(`${req.method} ${req.originalUrl} -- res status code ${res.statusCode}`);
 
     return res.send(articles);
+  });
+
+  route.get(`/:articleId`, async (req, res) => {
+    const id = req.params.articleId;
+    try {
+      const articleData = await articleService.findById(id);
+      const commentsData = await commentService.findByArticleId(id);
+      console.log(11111111111111);
+      console.log(`commentsData`, commentsData);
+      return res.send({articleData, commentsData});
+    } catch (e) {
+      console.log(e);
+      return res.send();
+    }
   });
 
   route.delete(`/:articleId`, async (req, res) => {

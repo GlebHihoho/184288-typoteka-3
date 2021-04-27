@@ -15,14 +15,15 @@ const define = (sequelize) => {
   const User = defineUser(sequelize);
 
   User.hasMany(Article, {as: Aliase.ARTICLES, foreignKey: `userId`});
-  Comment.belongsTo(User, {as: Aliase.USERS, foreignKey: `userId`});
-  Article.belongsTo(User, {as: Aliase.USERS, foreignKey: `userId`});
+  User.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `userId`});
 
   Article.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `articleId`, onDelete: `CASCADE`, onUpdate: `CASCADE`});
+  Article.belongsTo(User, {as: Article.USER, foreignKey: `userId`});
   Comment.belongsTo(Article, {as: Aliase.ARTICLES, foreignKey: `articleId`});
+  Comment.belongsTo(User, {as: Aliase.USER, foreignKey: `userId`});
 
-  Article.belongsToMany(Category, {through: ArticleCategory, foreignKey: `articleID`, as: Aliase.CATEGORIES});
-  Category.belongsToMany(Article, {through: ArticleCategory, foreignKey: `categoryID`, as: Aliase.ARTICLES});
+  Article.belongsToMany(Category, {through: ArticleCategory, foreignKey: `articleId`, as: Aliase.CATEGORIES});
+  Category.belongsToMany(Article, {through: ArticleCategory, foreignKey: `categoryId`, as: Aliase.ARTICLES});
 
   return {Article, ArticleCategory, Category, Comment, User};
 };

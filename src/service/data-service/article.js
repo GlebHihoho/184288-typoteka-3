@@ -13,6 +13,12 @@ class ArticleService {
     });
   }
 
+  findById(id) {
+    return this._Article.findByPk(id, {
+      include: [Alias.CATEGORIES],
+    });
+  }
+
   async drop(id) {
     const deletedRows = await this._Article.destroy({
       where: {id}

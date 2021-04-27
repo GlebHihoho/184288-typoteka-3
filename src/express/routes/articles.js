@@ -4,6 +4,7 @@ const {Router} = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
+
 const api = require(`../api`);
 
 const UPLOAD_DIR = `../../../upload`;
@@ -49,14 +50,28 @@ articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
   }
 });
 
-articlesRoute.get(`/:id`, (req, res) => {
+articlesRoute.get(`/:id`, async (req, res) => {
+  const id = req.params.id;
+  let article = null;
+  let comments = null;
+
   const pageContent = {
     title: `Публикация`,
     bodyStyle: ``,
     divClass: `wrapper`,
     header: `loggedOn`,
   };
-  return res.render(`pages/post`, pageContent);
+
+  try {
+    const {articleData, commentsData} = await api.getArticleById(id);
+    article = articleData;
+    comments = commentsData;
+    console.log('comments', comments);
+  } catch (error) {
+    return res.render(`pages/post`, pageContent);
+  }
+
+  return res.render(`pages/post`, {...pageContent, article, comments});
 });
 
 articlesRoute.get(`/category/:id`, (req, res) => {
