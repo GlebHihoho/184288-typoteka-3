@@ -9,7 +9,7 @@
     "start": "cross-env LOG_LEVEL=error nodemon -r dotenv/config ./src/service/service.js --server",
     "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js --server",
     "fill": "node ./src/service/service.js --fill",
-    "filldb": "node -r dotenv/config ./src/service/service.js --filldb 15",
+    "filldb": "node -r dotenv/config ./src/service/service.js --filldb",
     "eslint": "eslint --ext .js src/",
     "server": "nodemon ./src/service/service.js --server 3000",
     "express": "nodemon ./src/express"
