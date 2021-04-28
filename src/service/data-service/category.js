@@ -1,5 +1,9 @@
 'use strict';
 
+const Sequelize = require(`sequelize`);
+
+const Aliase = require(`../models/aliase`);
+
 class CategoryService {
   constructor(sequelize) {
     this._Category = sequelize.models.Category;
@@ -10,11 +14,23 @@ class CategoryService {
     return this._Category.create(data);
   }
 
-  findAll() {
-    return this._Category.findAll({
-      raw: true,
+  async findAll() {
+    const result = await this._Category.findAll({
+      attributes: [
+        `id`,
+        `name`,
+        [Sequelize.fn(`COUNT`, Sequelize.col(`"articles_categories"."categoryId"`)), `count`]
+      ],
+      group: [Sequelize.col(`Category.id`)],
       order: [[`updatedAt`, `DESC`]],
+      include: [{
+        model: this._ArticleCategory,
+        as: Aliase.ARTICLES_CATEGORIES,
+        attributes: [],
+      }]
     });
+
+    return result.map((it) => it.get());
   }
 
   async drop(id) {

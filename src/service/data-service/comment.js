@@ -6,25 +6,18 @@ class CommentService {
   constructor(sequelize) {
     this._Comment = sequelize.models.Comment;
     this._User = sequelize.models.User;
-
-    console.log(sequelize.models);
   }
 
   async findByArticleId(articleId) {
-
-
     const comments = await this._Comment.findAll({
       where: {
         articleId
       },
-      // include: [{
-      //   model: this._User,
-      //   as: `user`,
-      // }],
-      include: [Alias.USER]
+      include: [Alias.USER],
+      row: true
     });
 
-    return comments;
+    return comments.map((comment) => comment.get());
   }
 
   async drop(id) {

@@ -11,6 +11,7 @@ block content
           button.category__button.button.button--category(type='submit') Добавить
       ul.category__list
         each category in categories
+          - var disabled = Number(category.count) !== 0
           li.category__list-item
             form(action=`/categories/${category.id}`, method='post')
               input(id=`modify-form-category-${category.id}` type='text', name='name', value= category.name)
@@ -18,4 +19,4 @@ block content
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
               a(href=`/categories/delete/${category.id}`)
-                button.category__button.button.button--category(type='button') Удалить
+                button.category__button.button.button--category(type='button' disabled= disabled) Удалить

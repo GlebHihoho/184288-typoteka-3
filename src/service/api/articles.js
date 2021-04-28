@@ -21,14 +21,11 @@ module.exports = (app, articleService, commentService) => {
 
   route.get(`/:articleId`, async (req, res) => {
     const id = req.params.articleId;
+
     try {
-      const articleData = await articleService.findById(id);
-      const commentsData = await commentService.findByArticleId(id);
-      console.log(11111111111111);
-      console.log(`commentsData`, commentsData);
+      const [articleData, commentsData] = await Promise.all([articleService.findById(id), commentService.findByArticleId(id)]);
       return res.send({articleData, commentsData});
     } catch (e) {
-      console.log(e);
       return res.send();
     }
   });

@@ -50,8 +50,8 @@ articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
   }
 });
 
-articlesRoute.get(`/:id`, async (req, res) => {
-  const id = req.params.id;
+articlesRoute.get(`/:articleId`, async (req, res) => {
+  const id = req.params.articleId;
   let article = null;
   let comments = null;
 
@@ -66,7 +66,6 @@ articlesRoute.get(`/:id`, async (req, res) => {
     const {articleData, commentsData} = await api.getArticleById(id);
     article = articleData;
     comments = commentsData;
-    console.log('comments', comments);
   } catch (error) {
     return res.render(`pages/post`, pageContent);
   }

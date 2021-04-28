@@ -7,7 +7,7 @@ const route = new Router();
 module.exports = (app, categoryService) => {
   app.use(`/categories`, route);
 
-  route.get(`/`, async (req, res) => {
+  route.get(`/`, async (_req, res) => {
     const categories = await categoryService.findAll();
 
     return res.send(categories);
