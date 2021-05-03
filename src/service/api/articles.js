@@ -11,12 +11,22 @@ const logger = getLogger();
 module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
-  route.get(`/`, async (req, res) => {
-    const articles = await articleService.findAll();
+  route.get(`/`, async (_req, res) => {
+    try {
+      const articles = await articleService.findAll();
+      return res.send(articles);
+    } catch (e) {
+      return res.send();
+    }
+  });
 
-    logger.debug(`${req.method} ${req.originalUrl} -- res status code ${res.statusCode}`);
-
-    return res.send(articles);
+  route.get(`/most-popular`, async (_req, res) => {
+    try {
+      const articles = await articleService.findMostPopular();
+      return res.send(articles);
+    } catch (e) {
+      return res.send();
+    }
   });
 
   route.get(`/:articleId`, async (req, res) => {

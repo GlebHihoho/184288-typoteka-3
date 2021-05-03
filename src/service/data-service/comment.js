@@ -20,6 +20,18 @@ class CommentService {
     return comments.map((comment) => comment.get());
   }
 
+  async findLastComments() {
+    const comments = await this._Comment.findAll({
+      limit: 4,
+      subQuery: false,
+      order: [[`createdAt`, `DESC`]],
+      include: [Alias.USER],
+      row: true
+    });
+
+    return comments.map((comment) => comment.get());
+  }
+
   async drop(id) {
     const deletedRows = await this._Comment.destroy({
       where: {id}

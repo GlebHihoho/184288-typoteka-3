@@ -16,9 +16,14 @@ const updateCategory = (id, data) => axiosInstance.patch(`categories/${id}`, dat
 
 const getArticles = () => axiosInstance.get(`articles`).then((res) => res.data);
 const getArticleById = (id) => axiosInstance.get(`articles/${id}`).then((res) => res.data);
+const getMostPopularArticles = () => axiosInstance.get(`articles/most-popular`).then((res) => res.data);
+
 const createArticle = (data) => axiosInstance.post(`articles`, data);
 const updateArticle = (id, data) => axiosInstance.put(`articles/${id}`, data);
 const deleteArticle = (id) => axiosInstance.delete(`articles/${id}`);
+
+const getLastComments = () => axiosInstance.get(`comments/last`).then((res) => res.data);
+
 const getActicleComments = (id) => axiosInstance.get(`articles/${id}/comments`).then((res) => res.data);
 const deleteArticleComment = (articleId, commentId) => axiosInstance.delete(`${articleId}/comments/${commentId}`);
 const createActicleComment = (articleId, data) => axiosInstance.post(`articles/${articleId}/comments`, data);
@@ -32,6 +37,10 @@ module.exports = {
 
   getArticles,
   getArticleById,
+  getMostPopularArticles,
+
+  getLastComments,
+
   createArticle,
   updateArticle,
   deleteArticle,
