@@ -15,8 +15,6 @@ mainRoute.get(`/`, async (_req, res) => {
     api.getArticles()
   ]);
 
-  console.log(`articles`, articles);
-
   const pageContent = {
     title: `Главная страница`,
     bodyStyle: ``,

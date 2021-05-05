@@ -5,7 +5,7 @@ block content
       h1.notes__title Мои записи
       ul.notes__list
         each article in articles
-          form(action=`/my/delete/${article.id}`, method="get")
+          form(action=`/my/delete/${article.id}`, method="post")
             li.notes__list-item
               time.notes__item-time(datetime= article.createdAt)= dayjs(article.createdAt).format('DD.MM.YYYY')
               a.notes__item-text(href=`/articles/${article.id}`)= article.title

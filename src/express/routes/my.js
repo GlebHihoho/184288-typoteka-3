@@ -22,7 +22,7 @@ myRoute.get(`/`, async (_req, res) => {
   });
 });
 
-myRoute.get(`/delete/:articleId`, async (req, res) => {
+myRoute.post(`/delete/:articleId`, async (req, res) => {
   const id = req.params.articleId;
 
   await api.deleteArticle(id);

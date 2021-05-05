@@ -17,6 +17,7 @@ const updateCategory = (id, data) => axiosInstance.patch(`categories/${id}`, dat
 const getArticles = () => axiosInstance.get(`articles`).then((res) => res.data);
 const getArticleById = (id) => axiosInstance.get(`articles/${id}`).then((res) => res.data);
 const getMostPopularArticles = () => axiosInstance.get(`articles/most-popular`).then((res) => res.data);
+const getArticlesByCategoryId = (id) => axiosInstance.get(`articles/category-id/${id}`).then((res) => res.data);
 
 const createArticle = (data) => axiosInstance.post(`articles`, data);
 const updateArticle = (id, data) => axiosInstance.put(`articles/${id}`, data);
@@ -38,6 +39,7 @@ module.exports = {
   getArticles,
   getArticleById,
   getMostPopularArticles,
+  getArticlesByCategoryId,
 
   getLastComments,
 
