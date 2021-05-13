@@ -4,6 +4,7 @@ const {Router} = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
+
 const api = require(`../api`);
 
 const UPLOAD_DIR = `../../../upload`;
@@ -49,24 +50,57 @@ articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
   }
 });
 
-articlesRoute.get(`/:id`, (req, res) => {
+articlesRoute.get(`/:articleId`, async (req, res) => {
+  const id = req.params.articleId;
+  let article = null;
+  let comments = null;
+
   const pageContent = {
     title: `Публикация`,
     bodyStyle: ``,
     divClass: `wrapper`,
     header: `loggedOn`,
   };
-  return res.render(`pages/post`, pageContent);
+
+  try {
+    const {articleData, commentsData} = await api.getArticleById(id);
+    article = articleData;
+    comments = commentsData;
+  } catch (error) {
+    return res.render(`pages/post`, pageContent);
+  }
+
+  return res.render(`pages/post`, {...pageContent, article, comments});
 });
 
-articlesRoute.get(`/category/:id`, (req, res) => {
+articlesRoute.get(`/category/:categoryId`, async (req, res) => {
+  const categoryId = req.params.categoryId;
+  let h1 = ``;
+
   const pageContent = {
     title: `Публикации в категории`,
     bodyStyle: ``,
     divClass: `wrapper`,
     header: `loggedOff`,
   };
-  return res.render(`pages/articles-by-category`, pageContent);
+
+  try {
+    const [categoriesData, articles] = await Promise.all([
+      api.getCategories(),
+      api.getArticlesByCategoryId(categoryId)
+    ]);
+
+    const categories = categoriesData.map((category) => ({
+      ...category,
+      isActive: category.id === Number(categoryId),
+    }));
+
+    h1 = categoriesData.find((category) => category.id === Number(categoryId)).name;
+
+    return res.render(`pages/articles-by-category`, {...pageContent, articles, categories, h1});
+  } catch (error) {
+    return res.render(`pages/post`, pageContent);
+  }
 });
 
 module.exports = articlesRoute;

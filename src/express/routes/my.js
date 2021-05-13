@@ -22,6 +22,14 @@ myRoute.get(`/`, async (_req, res) => {
   });
 });
 
+myRoute.post(`/delete/:articleId`, async (req, res) => {
+  const id = req.params.articleId;
+
+  await api.deleteArticle(id);
+
+  res.redirect(`/my`);
+});
+
 myRoute.get(`/comments`, async (_req, res) => {
   pageContent.title = `Комментарии`;
   return res.render(`pages/comments`, pageContent);

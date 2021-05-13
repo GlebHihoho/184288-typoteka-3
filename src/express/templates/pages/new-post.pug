@@ -30,11 +30,12 @@ block content
                       input.visually-hidden(type="file" name="picture" required="")
                       | Обзор
                   button.button.button--transparent Удалить
-                each category in categories
-                  .new-publication__checkbox.new-publication__checkbox--auto
-                    input(id=`${category}` type="checkbox" name=`category-${category}` value=`${category}`)
-                    label(for=`${category}`)= category
-                a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
+                div
+                  each category in categories
+                    .new-publication__checkbox.new-publication__checkbox--auto
+                      input(id=`${category.id}` type="checkbox" name=`category-${category.id}` value=`${category.id}`)
+                      label(for=`${category.id}`)= category.name
+                  a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label

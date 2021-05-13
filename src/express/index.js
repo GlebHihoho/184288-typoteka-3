@@ -1,7 +1,11 @@
 'use strict';
 
 const express = require(`express`);
+const dayjs = require(`dayjs`);
 const path = require(`path`);
+const bodyParser = require(`body-parser`);
+
+const {HTTP_CODE} = require(`../constants`);
 
 const mainRoute = require(`./routes/main`);
 const registerRoute = require(`./routes/register`);
@@ -16,6 +20,11 @@ const PUBLIC_DIR = `../../public`;
 const UPLOAD_DIR = `../../upload`;
 
 const app = express();
+
+app.locals.dayjs = dayjs;
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 app.set(`views`, path.join(__dirname, `templates`));
 app.set(`view engine`, `pug`);
@@ -32,5 +41,8 @@ app.use(`/register`, registerRoute);
 app.use(`/articles`, articlesRoute);
 app.use(`/categories`, categoriesRoute);
 
+app.use((_req, res) => res.status(HTTP_CODE.BAD_REQUEST).render(`pages/400`));
+app.use((_err, _req, res, _next) => res.status(HTTP_CODE.INTERNAL_SERVER_ERROR).render(`pages/500`));
+
 app
-  .listen(DEFAULT_PORT, () => console.log(`Сервер запущен на порту: ${DEFAULT_PORT}`));
+  .listen(DEFAULT_PORT, () => console.log(`Start server on PORT: ${DEFAULT_PORT}`));
