@@ -11,9 +11,10 @@ const logger = getLogger();
 module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
-  route.get(`/`, async (_req, res) => {
+  route.get(`/`, async (req, res) => {
+    const {offset, limit} = req.query;
     try {
-      const articles = await articleService.findAll();
+      const articles = await articleService.findAll({offset, limit});
       return res.send(articles);
     } catch (e) {
       return res.send();
