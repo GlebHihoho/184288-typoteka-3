@@ -12,9 +12,12 @@ class ArticleService {
     this._Comment = sequelize.models.Comment;
   }
 
-  findAll() {
-    return this._Article.findAll({
+  findAll({limit = 8, offset = 0}) {
+    return this._Article.findAndCountAll({
+      limit,
+      offset,
       include: [Alias.CATEGORIES, Alias.COMMENTS],
+      distinct: true,
     });
   }
 

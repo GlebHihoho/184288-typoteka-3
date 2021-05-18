@@ -13,7 +13,7 @@ const pageContent = {
 };
 
 myRoute.get(`/`, async (_req, res) => {
-  const articles = await api.getArticles();
+  const articles = await api.getArticles({limit: 8, offset: 0});
 
   return res.render(`pages/my`, {
     ...pageContent,

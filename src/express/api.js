@@ -14,7 +14,7 @@ const getCategories = () => axiosInstance.get(`categories`).then((res) => res.da
 const deleteCategory = (id) => axiosInstance.delete(`categories/${id}`);
 const updateCategory = (id, data) => axiosInstance.patch(`categories/${id}`, data);
 
-const getArticles = () => axiosInstance.get(`articles`).then((res) => res.data);
+const getArticles = ({limit, offset}) => axiosInstance.get(`articles`, {params: {limit, offset}}).then((res) => res.data);
 const getArticleById = (id) => axiosInstance.get(`articles/${id}`).then((res) => res.data);
 const getMostPopularArticles = () => axiosInstance.get(`articles/most-popular`).then((res) => res.data);
 const getArticlesByCategoryId = (id) => axiosInstance.get(`articles/category-id/${id}`).then((res) => res.data);
