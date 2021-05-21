@@ -8,8 +8,16 @@ class ArticleService {
   constructor(sequelize) {
     this._Article = sequelize.models.Article;
     this._ArticleCategory = sequelize.models.ArticleCategory;
+    this._Category = sequelize.models.Category;
     this._User = sequelize.models.User;
     this._Comment = sequelize.models.Comment;
+  }
+
+  async create(newArticle) {
+    const article = await this._Article.create(newArticle);
+    await article.addCategories(newArticle.categories);
+
+    return article.get();
   }
 
   findAll({limit = 8, offset = 0}) {
@@ -21,10 +29,29 @@ class ArticleService {
     });
   }
 
-  findById(id) {
-    return this._Article.findByPk(id, {
-      include: [Alias.CATEGORIES],
+  async findById(id) {
+    const result = await this._Article.findByPk(id, {
+      attributes: [
+        `id`,
+        `title`,
+        `preview`,
+        `fullText`,
+        `image`,
+        `createdAt`,
+        [Sequelize.fn(`COUNT`, Sequelize.col(`"articles_categories"."articleId"`)), `count`],
+      ],
+      include: [
+        {
+          model: this._ArticleCategory,
+          as: Alias.ARTICLES_CATEGORIES,
+          attributes: [],
+        }
+      ],
+      group: [Sequelize.col(`Article.id`)],
+      row: true,
     });
+
+    return result;
   }
 
   async findMostPopular() {

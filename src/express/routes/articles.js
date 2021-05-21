@@ -37,11 +37,11 @@ articlesRoute.get(`/add`, async (_req, res) => {
   return res.render(`pages/new-post`, pageContent);
 });
 
-articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
+articlesRoute.post(`/add`, upload.single(`image`), async (req, res) => {
   const {body, file} = req;
   const articleData = body;
-  articleData[`picture`] = file.filename;
-
+  articleData.image = file.filename;
+  console.log(`articleData`, body);
   try {
     await api.createArticle(articleData);
     res.redirect(`/my`);
@@ -70,6 +70,7 @@ articlesRoute.get(`/:articleId`, async (req, res) => {
     return res.render(`pages/post`, pageContent);
   }
 
+  console.log(`article`, article);
   return res.render(`pages/post`, {...pageContent, article, comments});
 });
 

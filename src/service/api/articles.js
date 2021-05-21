@@ -50,6 +50,7 @@ module.exports = (app, articleService, commentService) => {
       const [articleData, commentsData] = await Promise.all([articleService.findById(id), commentService.findByArticleId(id)]);
       return res.send({articleData, commentsData});
     } catch (e) {
+      console.log(e);
       return res.send();
     }
   });
@@ -61,5 +62,14 @@ module.exports = (app, articleService, commentService) => {
     logger.debug(`${req.method} ${req.originalUrl} -- res status code ${res.statusCode}`);
 
     return res.send(article);
+  });
+
+  route.post(`/add`, async (req, res) => {
+    try {
+      const article = await articleService.create(req.body);
+      return res.send(article);
+    } catch (error) {
+      return res.send();
+    }
   });
 };

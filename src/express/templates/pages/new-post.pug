@@ -12,7 +12,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for="new-publication-date" aria-label="Календарь")
-                    input#new-publication-date(type="text" name="created_date" placeholder="21.03.2019" value=`` required="")
+                    input#new-publication-date(type="text" name="createdAt" placeholder="21.03.2019" value=`` required="")
               button.new-publication__button.button.button--colored(type="submit") Опубликовать
             a.popup__button.button.button--popup-close(href="/my" aria-label="Закрыть окно")
               | Закрыть
@@ -24,23 +24,26 @@ block content
                     input(type="text" placeholder="Заголовок" name="title" value="" required="")
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type="text" value="" name="picture-name" placeholder="Фотография" readonly="")
+                    input#image-name-field(type="text" name="picture" value="" placeholder="Фотография" readonly)
                   .form__image-loader.form__image-loader--publication
                     label
-                      input.visually-hidden(type="file" name="picture" required="")
+                      input.visually-hidden(type="file" name="image" required="")
                       | Обзор
-                  button.button.button--transparent Удалить
-                div
-                  each category in categories
-                    .new-publication__checkbox.new-publication__checkbox--auto
-                      input(id=`${category.id}` type="checkbox" name=`category-${category.id}` value=`${category.id}`)
-                      label(for=`${category.id}`)= category.name
-                  a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
+
+                each category in categories
+                  .new-publication__checkbox.new-publication__checkbox--auto(style="padding: 14px 0;")
+                    input(id=category.id type="checkbox" name=`categories` value=category.id)
+                    label(for=`${category.id}`)= category.name
+                a.new-publication__form-link.button.button--transparent(href="/categories") Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows="2" placeholder="Анонс публикации" name="announce")
+                    textarea(rows="2" placeholder="Анонс публикации" name="preview")
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows="5" placeholder="Полный текст публикации" name="full_text")
+                    textarea(rows="5" placeholder="Полный текст публикации" name="fullText")
       .modal__overlay
+
+  block scripts
+    script(src='/js/vendor.js')
+    script(src='/js/main.js')

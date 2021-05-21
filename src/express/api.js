@@ -19,7 +19,7 @@ const getArticleById = (id) => axiosInstance.get(`articles/${id}`).then((res) =>
 const getMostPopularArticles = () => axiosInstance.get(`articles/most-popular`).then((res) => res.data);
 const getArticlesByCategoryId = (id) => axiosInstance.get(`articles/category-id/${id}`).then((res) => res.data);
 
-const createArticle = (data) => axiosInstance.post(`articles`, data);
+const createArticle = (data) => axiosInstance.post(`articles/add`, data);
 const updateArticle = (id, data) => axiosInstance.put(`articles/${id}`, data);
 const deleteArticle = (id) => axiosInstance.delete(`articles/${id}`);
 
