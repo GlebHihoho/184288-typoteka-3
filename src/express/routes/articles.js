@@ -41,7 +41,7 @@ articlesRoute.post(`/add`, upload.single(`image`), async (req, res) => {
   const {body, file} = req;
   const articleData = body;
   articleData.image = file.filename;
-  console.log(`articleData`, body);
+
   try {
     await api.createArticle(articleData);
     res.redirect(`/my`);
@@ -63,15 +63,46 @@ articlesRoute.get(`/:articleId`, async (req, res) => {
   };
 
   try {
-    const {articleData, commentsData} = await api.getArticleById(id);
+    const {articleData, commentsData, categoriesData} = await api.getArticleById(id);
+
+    articleData.categories = articleData.categories.map((category) => {
+      const count = categoriesData.find((item) => item.id === category.id).count;
+      return {...category, count};
+    });
+
     article = articleData;
     comments = commentsData;
   } catch (error) {
     return res.render(`pages/post`, pageContent);
   }
 
-  console.log(`article`, article);
   return res.render(`pages/post`, {...pageContent, article, comments});
+});
+
+articlesRoute.get(`/edit/:articleId`, async (req, res) => {
+  const id = req.params.articleId;
+  let article = null;
+  let categories = null;
+
+  const pageContent = {
+    title: `Публикация`,
+    bodyStyle: ``,
+    divClass: `wrapper`,
+    header: `loggedOn`,
+  };
+
+  try {
+    const {articleData} = await api.getArticleById(id);
+    const categoriesData = await api.getCategories();
+    article = articleData;
+    categories = categoriesData;
+    console.log(`article.categories`, article.categories);
+    console.log(`categoriesData`, categoriesData);
+  } catch (error) {
+    return res.render(`pages/post`, pageContent);
+  }
+
+  return res.render(`pages/edit-post`, {...pageContent, article, categories});
 });
 
 articlesRoute.get(`/category/:categoryId`, async (req, res) => {

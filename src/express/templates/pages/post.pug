@@ -14,7 +14,7 @@ block content
               each category in article.categories
                 li.themes__item
                   a.themes__item-link(href=`/articles/category/${category.id}`)= category.name
-                    sup 88
+                    sup= category.count
           .post__picture
             img(src=`/img/${article.image}`, alt='')
           .post__text

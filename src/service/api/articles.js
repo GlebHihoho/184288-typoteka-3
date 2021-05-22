@@ -8,7 +8,7 @@ const route = new Router();
 const logger = getLogger();
 
 
-module.exports = (app, articleService, commentService) => {
+module.exports = (app, articleService, commentService, categoryService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
@@ -47,8 +47,13 @@ module.exports = (app, articleService, commentService) => {
     const id = req.params.articleId;
 
     try {
-      const [articleData, commentsData] = await Promise.all([articleService.findById(id), commentService.findByArticleId(id)]);
-      return res.send({articleData, commentsData});
+      const [articleData, commentsData, categoriesData] = await Promise.all([
+        articleService.findById(id),
+        commentService.findByArticleId(id),
+        categoryService.findAll(),
+      ]);
+
+      return res.send({articleData, commentsData, categoriesData});
     } catch (e) {
       console.log(e);
       return res.send();

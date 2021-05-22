@@ -19,7 +19,7 @@ const app = new Router();
 defineModels(sequelize);
 
 (() => {
-  articles(app, new ArticleService(sequelize), new CommentService(sequelize));
+  articles(app, new ArticleService(sequelize), new CommentService(sequelize), new CategoryService(sequelize));
   categories(app, new CategoryService(sequelize));
   search(app, new SearchService(sequelize));
   comments(app, new CommentService(sequelize));

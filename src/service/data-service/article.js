@@ -29,29 +29,10 @@ class ArticleService {
     });
   }
 
-  async findById(id) {
-    const result = await this._Article.findByPk(id, {
-      attributes: [
-        `id`,
-        `title`,
-        `preview`,
-        `fullText`,
-        `image`,
-        `createdAt`,
-        [Sequelize.fn(`COUNT`, Sequelize.col(`"articles_categories"."articleId"`)), `count`],
-      ],
-      include: [
-        {
-          model: this._ArticleCategory,
-          as: Alias.ARTICLES_CATEGORIES,
-          attributes: [],
-        }
-      ],
-      group: [Sequelize.col(`Article.id`)],
-      row: true,
+  findById(id) {
+    return this._Article.findByPk(id, {
+      include: [Alias.CATEGORIES],
     });
-
-    return result;
   }
 
   async findMostPopular() {
