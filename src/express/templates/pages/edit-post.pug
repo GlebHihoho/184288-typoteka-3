@@ -4,7 +4,7 @@ block content
     section.modal.modal--flex
       .popup.popup--new-publication.popup--flex
         .new-publication
-          form(action="/articles/add" method="post" enctype="multipart/form-data")
+          form(action=`/articles/edit/${article.id}` method="post" enctype="multipart/form-data")
             .new-publication__header
               h1 Редактирование публикации
               .new-publication__date-form
@@ -27,10 +27,10 @@ block content
                     input#image-name-field(type="text" name="picture" value=article.image placeholder="Фотография" readonly)
                   .form__image-loader.form__image-loader--publication
                     label
-                      input.visually-hidden(type="file" name="image" required="")
+                      input.visually-hidden(type="file" name="image")
                       | Обзор
 
-                code.formattedDebug #{JSON.stringify(article, null, '  ')}
+                //- code.formattedDebug #{article.categories.includes((item) => String(item.id) === 15)}
 
                 each category in categories
                   .new-publication__checkbox.new-publication__checkbox--auto(style="padding: 14px 0;")

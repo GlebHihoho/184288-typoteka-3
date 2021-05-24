@@ -20,6 +20,16 @@ class ArticleService {
     return article.get();
   }
 
+  async update(id, article) {
+    const [updatedRows] = await this._Article.update(article, {where: {id}});
+    await this._ArticleCategory.destroy({
+      where: {ArticleId: id}
+    });
+    await article.addCategories([...article.categories]);
+
+    return Boolean(updatedRows);
+  }
+
   findAll({limit = 8, offset = 0}) {
     return this._Article.findAndCountAll({
       limit,

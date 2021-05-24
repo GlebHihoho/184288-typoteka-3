@@ -4,6 +4,9 @@ const {Router} = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
+const dayjs = require(`dayjs`);
+const customParseFormat = require(`dayjs/plugin/customParseFormat`);
+dayjs.extend(customParseFormat);
 
 const api = require(`../api`);
 
@@ -41,6 +44,7 @@ articlesRoute.post(`/add`, upload.single(`image`), async (req, res) => {
   const {body, file} = req;
   const articleData = body;
   articleData.image = file.filename;
+  articleData.createdAt = dayjs(articleData.createdAt, `DD.MM.YYYY`).toISOString();
 
   try {
     await api.createArticle(articleData);
@@ -96,13 +100,30 @@ articlesRoute.get(`/edit/:articleId`, async (req, res) => {
     const categoriesData = await api.getCategories();
     article = articleData;
     categories = categoriesData;
-    console.log(`article.categories`, article.categories);
-    console.log(`categoriesData`, categoriesData);
+    article.categories = article.categories.map((item) => item.id);
   } catch (error) {
     return res.render(`pages/post`, pageContent);
   }
 
   return res.render(`pages/edit-post`, {...pageContent, article, categories});
+});
+
+articlesRoute.post(`/edit/:articleId`, upload.single(`image`), async (req, res) => {
+  const id = req.params.articleId;
+  const {body, file} = req;
+  const articleData = body;
+  articleData.createdAt = dayjs(articleData.createdAt, `DD.MM.YYYY`).toISOString();
+
+  if (file && file.filename) {
+    articleData.image = file.filename;
+  }
+
+  try {
+    await api.updateArticle(id, articleData);
+    res.redirect(`/my`);
+  } catch (e) {
+    res.redirect(`back`);
+  }
 });
 
 articlesRoute.get(`/category/:categoryId`, async (req, res) => {

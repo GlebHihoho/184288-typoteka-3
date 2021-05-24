@@ -77,4 +77,14 @@ module.exports = (app, articleService, commentService, categoryService) => {
       return res.send();
     }
   });
+
+  route.put(`/:articleId`, async (req, res) => {
+    const id = req.params.articleId;
+    try {
+      const article = await articleService.update(id, req.body);
+      return res.send(article);
+    } catch (error) {
+      return res.send();
+    }
+  });
 };
