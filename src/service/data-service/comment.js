@@ -20,6 +20,16 @@ class CommentService {
     return comments.map((comment) => comment.get());
   }
 
+  async findAll() {
+    const comments = await this._Comment.findAll({
+      order: [[`createdAt`, `DESC`]],
+      include: [Alias.USER, Alias.ARTICLES],
+      row: true
+    });
+
+    return comments.map((comment) => comment.get());
+  }
+
   async findLastComments() {
     const comments = await this._Comment.findAll({
       limit: 4,

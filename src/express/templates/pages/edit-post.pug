@@ -29,9 +29,6 @@ block content
                     label
                       input.visually-hidden(type="file" name="image")
                       | Обзор
-
-                //- code.formattedDebug #{article.categories.includes((item) => String(item.id) === 15)}
-
                 each category in categories
                   .new-publication__checkbox.new-publication__checkbox--auto(style="padding: 14px 0;")
                     input(
