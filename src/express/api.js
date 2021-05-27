@@ -29,7 +29,7 @@ const deleteComment = (commentId) => axiosInstance.delete(`comments/${commentId}
 
 const getActicleComments = (id) => axiosInstance.get(`articles/${id}/comments`).then((res) => res.data);
 const deleteArticleComment = (articleId, commentId) => axiosInstance.delete(`${articleId}/comments/${commentId}`);
-const createActicleComment = (articleId, data) => axiosInstance.post(`articles/${articleId}/comments`, data);
+const createActicleComment = (articleId, data) => axiosInstance.post(`comments/${articleId}/create`, data);
 const searchArticle = (search) => axiosInstance.get(`search`, {params: {search}}).then((res) => res.data);
 
 module.exports = {

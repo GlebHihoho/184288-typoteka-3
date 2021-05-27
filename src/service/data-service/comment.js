@@ -8,6 +8,13 @@ class CommentService {
     this._User = sequelize.models.User;
   }
 
+  create(articleId, data) {
+    return this._Comment.create({
+      articleId,
+      ...data
+    });
+  }
+
   async findByArticleId(articleId) {
     const comments = await this._Comment.findAll({
       where: {

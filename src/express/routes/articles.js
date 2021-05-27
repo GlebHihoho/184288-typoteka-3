@@ -83,6 +83,20 @@ articlesRoute.get(`/:articleId`, async (req, res) => {
   return res.render(`pages/post`, {...pageContent, article, comments});
 });
 
+articlesRoute.post(`/:articleId/comments`, async (req, res) => {
+  const {body, params} = req;
+  const {articleId} = params;
+
+  try {
+    // TODO: remove userId after add login and registration
+    await api.createActicleComment(articleId, {...body, userId: 1});
+    res.redirect(`/articles/${articleId}`);
+  } catch (error) {
+    console.log(`error`, error);
+    res.render(`pages/500`);
+  }
+});
+
 articlesRoute.get(`/edit/:articleId`, async (req, res) => {
   const id = req.params.articleId;
   let article = null;
