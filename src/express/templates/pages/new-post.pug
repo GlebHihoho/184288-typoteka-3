@@ -12,7 +12,8 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for="new-publication-date" aria-label="Календарь")
-                    input#new-publication-date(type="text" name="createdAt" placeholder="21.03.2019" value=`` required="")
+                    input#new-publication-date(type="text" name="createdAt" value=articleData.createdAt required="")
+                    +errorText(errorMessage.createdAt)
               button.new-publication__button.button.button--colored(type="submit") Опубликовать
             a.popup__button.button.button--popup-close(href="/my" aria-label="Закрыть окно")
               | Закрыть
@@ -21,27 +22,38 @@ block content
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type="text" placeholder="Заголовок" name="title" value="" required="")
+                    input(type="text" placeholder="Заголовок" name="title" value=articleData.title required="")
+                  +errorText(errorMessage.title)
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type="text" name="picture" value="" placeholder="Фотография" readonly)
+                    input#image-name-field(type="text" name="image" value=articleData.image placeholder="Фотография" readonly)
                   .form__image-loader.form__image-loader--publication
                     label
-                      input.visually-hidden(type="file" name="image" required="")
+                      input.visually-hidden(type="file" name="picture")
                       | Обзор
+                +errorText(errorMessage.image)
 
                 each category in categories
                   .new-publication__checkbox.new-publication__checkbox--auto(style="padding: 14px 0;")
-                    input(id=category.id type="checkbox" name=`categories` value=category.id)
+                    input(
+                      id=category.id
+                      type="checkbox"
+                      name=`categories`
+                      value=category.id
+                      checked=articleData.categories && articleData.categories.includes(String(category.id))
+                    )
                     label(for=`${category.id}`)= category.name
+                +errorText(errorMessage.categories)
                 a.new-publication__form-link.button.button--transparent(href="/categories") Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows="2" placeholder="Анонс публикации" name="preview")
+                    textarea(rows="2" placeholder="Анонс публикации" name="preview") #{articleData.preview}
+                +errorText(errorMessage.preview)
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows="5" placeholder="Полный текст публикации" name="fullText")
+                    textarea(rows="5" placeholder="Полный текст публикации" name="fullText") #{articleData.fullText}
+                +errorText(errorMessage.fullText)
       .modal__overlay
 
   block scripts

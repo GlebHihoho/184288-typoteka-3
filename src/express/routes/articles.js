@@ -9,6 +9,8 @@ const customParseFormat = require(`dayjs/plugin/customParseFormat`);
 dayjs.extend(customParseFormat);
 
 const api = require(`../api`);
+const {getErrorMessage, getArticleImage, getCategoryArticle} = require(`../../utils`);
+const {HTTP_CODE} = require(`../../constants`);
 
 const UPLOAD_DIR = `../../../upload`;
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
@@ -17,7 +19,7 @@ const articlesRoute = new Router();
 
 const storage = multer.diskStorage({
   destination: uploadDirAbsolute,
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     const uniqueName = nanoid(10);
     const extension = file.originalname.split(`.`).pop();
     cb(null, `${uniqueName}.${extension}`);
@@ -28,6 +30,10 @@ const upload = multer({storage});
 
 articlesRoute.get(`/add`, async (_req, res) => {
   const categories = await api.getCategories();
+  const articleData = {
+    categories: [],
+    createdAt: dayjs().format(`DD/MM/YYYY`),
+  };
 
   const pageContent = {
     title: `Новая публикация`,
@@ -35,38 +41,46 @@ articlesRoute.get(`/add`, async (_req, res) => {
     divClass: `wrapper`,
     header: `search`,
     categories,
+    articleData,
+    errorMessage: {},
   };
 
   return res.render(`pages/new-post`, pageContent);
 });
 
-articlesRoute.post(`/add`, upload.single(`image`), async (req, res) => {
+articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
   const {body, file} = req;
-  const articleData = body;
-  articleData.image = file.filename;
-  articleData.createdAt = dayjs(articleData.createdAt, `DD.MM.YYYY`).toISOString();
+  const articleData = {
+    ...body,
+    image: getArticleImage(file, body),
+    createdAt: dayjs(body.createdAt, `DD.MM.YYYY`).toISOString(),
+    categories: getCategoryArticle(body.categories),
+  };
 
   try {
     await api.createArticle(articleData);
-    res.redirect(`/my`);
-  } catch (e) {
-    res.redirect(`back`);
+    return res.redirect(`/my`);
+  } catch (error) {
+    const categories = await api.getCategories();
+
+    const pageContent = {
+      title: `Новая публикация`,
+      bodyStyle: `height: 1050px;`,
+      divClass: `wrapper`,
+      header: `search`,
+      categories,
+      articleData,
+      errorMessage: getErrorMessage(error.response.data.message),
+    };
+
+    return res.render(`pages/new-post`, pageContent);
   }
 });
 
 articlesRoute.get(`/:articleId`, async (req, res) => {
-  const id = req.params.articleId;
-  let article = null;
-  let comments = null;
-
-  const pageContent = {
-    title: `Публикация`,
-    bodyStyle: ``,
-    divClass: `wrapper`,
-    header: `loggedOn`,
-  };
-
   try {
+    const id = req.params.articleId;
+
     const {articleData, commentsData, categoriesData} = await api.getArticleById(id);
 
     articleData.categories = articleData.categories.map((category) => {
@@ -74,69 +88,107 @@ articlesRoute.get(`/:articleId`, async (req, res) => {
       return {...category, count};
     });
 
-    article = articleData;
-    comments = commentsData;
-  } catch (error) {
-    return res.render(`pages/post`, pageContent);
-  }
+    const pageContent = {
+      title: `Публикация`,
+      bodyStyle: ``,
+      divClass: `wrapper`,
+      header: `loggedOn`,
+      article: articleData,
+      comments: commentsData,
+      errorMessage: {},
+    };
 
-  return res.render(`pages/post`, {...pageContent, article, comments});
+    return res.render(`pages/post`, pageContent);
+  } catch (error) {
+    console.log(`error`, error);
+    return res.status(HTTP_CODE.NOT_FOUND).render(`pages/400`);
+  }
 });
 
-articlesRoute.post(`/:articleId/comments`, async (req, res) => {
+articlesRoute.post(`/:articleId`, async (req, res) => {
   const {body, params} = req;
   const {articleId} = params;
 
   try {
     // TODO: remove userId after add login and registration
-    await api.createActicleComment(articleId, {...body, userId: 1});
-    res.redirect(`/articles/${articleId}`);
+    await api.createActicleComment(articleId, {...body, articleId, userId: 1});
+    return res.redirect(`/articles/${articleId}`);
   } catch (error) {
-    console.log(`error`, error);
-    res.render(`pages/500`);
+    const {articleData, commentsData, categoriesData} = await api.getArticleById(articleId);
+
+    articleData.categories = articleData.categories.map((category) => {
+      const count = categoriesData.find((item) => item.id === category.id).count;
+      return {...category, count};
+    });
+
+    const pageContent = {
+      title: `Публикация`,
+      bodyStyle: ``,
+      divClass: `wrapper`,
+      header: `loggedOn`,
+      article: articleData,
+      comments: commentsData,
+      errorMessage: getErrorMessage(error.response.data.message),
+    };
+
+    return res.render(`pages/post`, pageContent);
   }
 });
 
 articlesRoute.get(`/edit/:articleId`, async (req, res) => {
-  const id = req.params.articleId;
-  let article = null;
-  let categories = null;
+  try {
+    const id = req.params.articleId;
 
-  const pageContent = {
-    title: `Публикация`,
-    bodyStyle: ``,
-    divClass: `wrapper`,
-    header: `loggedOn`,
+    const {articleData} = await api.getArticleById(id);
+    const categoriesData = await api.getCategories();
+
+    const pageContent = {
+      title: `Публикация`,
+      bodyStyle: ``,
+      divClass: `wrapper`,
+      header: `loggedOn`,
+      article: {
+        ...articleData,
+        categories: articleData.categories.map((item) => item.id),
+      },
+      categories: categoriesData,
+      errorMessage: {}
+    };
+
+    return res.render(`pages/edit-post`, pageContent);
+  } catch (error) {
+    return res.status(HTTP_CODE.NOT_FOUND).render(`pages/400`);
+  }
+});
+
+articlesRoute.post(`/edit/:articleId`, upload.single(`picture`), async (req, res) => {
+  const id = req.params.articleId;
+  const {body, file} = req;
+
+  const article = {
+    ...body,
+    image: getArticleImage(file, body),
+    createdAt: dayjs(body.createdAt, `DD.MM.YYYY`).toISOString(),
+    categories: getCategoryArticle(body.categories),
   };
 
   try {
-    const {articleData} = await api.getArticleById(id);
-    const categoriesData = await api.getCategories();
-    article = articleData;
-    categories = categoriesData;
-    article.categories = article.categories.map((item) => item.id);
+    await api.updateArticle(id, article);
+    return res.redirect(`/my`);
   } catch (error) {
-    return res.render(`pages/post`, pageContent);
-  }
+    const categories = await api.getCategories();
 
-  return res.render(`pages/edit-post`, {...pageContent, article, categories});
-});
+    const pageContent = {
+      title: `Публикация`,
+      bodyStyle: ``,
+      divClass: `wrapper`,
+      header: `loggedOn`,
+      article,
+      categories,
+      errorMessage: getErrorMessage(error.response.data.message),
+    };
 
-articlesRoute.post(`/edit/:articleId`, upload.single(`image`), async (req, res) => {
-  const id = req.params.articleId;
-  const {body, file} = req;
-  const articleData = body;
-  articleData.createdAt = dayjs(articleData.createdAt, `DD.MM.YYYY`).toISOString();
-
-  if (file && file.filename) {
-    articleData.image = file.filename;
-  }
-
-  try {
-    await api.updateArticle(id, articleData);
-    res.redirect(`/my`);
-  } catch (e) {
-    res.redirect(`back`);
+    return res.render(`pages/edit-post`, pageContent);
   }
 });
 

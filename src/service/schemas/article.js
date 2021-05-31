@@ -15,7 +15,6 @@ module.exports = Joi.object({
     .required(),
   fullText: Joi
     .string()
-    .string()
     .allow(null, ``)
     .max(1000),
   image: Joi

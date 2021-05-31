@@ -18,7 +18,7 @@ myRoute.get(`/`, async (_req, res) => {
   return res.render(`pages/my`, {
     ...pageContent,
     title: `Публикации`,
-    articles,
+    articles: articles.rows,
   });
 });
 

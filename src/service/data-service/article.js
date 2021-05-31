@@ -22,10 +22,13 @@ class ArticleService {
 
   async update(id, article) {
     const [updatedRows] = await this._Article.update(article, {where: {id}});
+
     await this._ArticleCategory.destroy({
-      where: {ArticleId: id}
+      where: {articleId: id}
     });
-    await article.addCategories([...article.categories]);
+
+    const updateArticle = await this._Article.findByPk(id);
+    await updateArticle.addCategories([...article.categories]);
 
     return Boolean(updatedRows);
   }

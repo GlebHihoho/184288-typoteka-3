@@ -33,6 +33,10 @@ mixin pagination(page, totalPages, width, prefix)
         li
           a.pagination__button.button.button--forward(href=`${prefix}page=${page + 1}`, aria-label='Страница вперед') Вперед
 
+mixin errorText(errorText)
+  if errorText
+    p(style="color: red") #{errorText}
+
 doctype html
 html(lang='ru')
   head

@@ -36,9 +36,10 @@ block content
                   p.comments__message= comment.text
 
           .comments__footer.comments__footer--user
-            form(action=`/articles/${article.id}/comments`, method='POST')
+            form(action=`/articles/${article.id}`, method='POST')
               .comments__avatar.avatar
                 img(src='/img/avatar-2.png', alt='аватар пользователя')
               label
                 textarea(rows='1', name='text' placeholder='Присоединиться к обсуждению')
+                +errorText(errorMessage.text)
               button.comments__button.button.button--colored(type='submit') Опубликовать

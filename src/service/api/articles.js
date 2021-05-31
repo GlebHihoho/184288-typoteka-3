@@ -2,7 +2,9 @@
 
 const {Router} = require(`express`);
 
+const {joiValidator} = require(`../middlewares`);
 const {getLogger} = require(`../lib/logger`);
+const {articleSchema} = require(`../schemas`);
 
 const route = new Router();
 const logger = getLogger();
@@ -69,22 +71,23 @@ module.exports = (app, articleService, commentService, categoryService) => {
     return res.send(article);
   });
 
-  route.post(`/add`, async (req, res) => {
+  route.post(`/add`, joiValidator(`body`, articleSchema), async (req, res, next) => {
     try {
       const article = await articleService.create(req.body);
       return res.send(article);
     } catch (error) {
-      return res.send();
+      return next(error);
     }
   });
 
-  route.put(`/:articleId`, async (req, res) => {
+  route.put(`/:articleId`, joiValidator(`body`, articleSchema), async (req, res, next) => {
     const id = req.params.articleId;
     try {
       const article = await articleService.update(id, req.body);
       return res.send(article);
     } catch (error) {
-      return res.send();
+      console.log(`error`, error);
+      return next(error);
     }
   });
 };

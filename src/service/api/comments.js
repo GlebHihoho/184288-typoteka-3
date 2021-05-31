@@ -2,19 +2,22 @@
 
 const {Router} = require(`express`);
 
+const {joiValidator} = require(`../middlewares`);
+const {commentSchema} = require(`../schemas`);
+
 const route = new Router();
 
 module.exports = (app, commentService) => {
   app.use(`/comments`, route);
 
-  route.post(`/:articleId/create`, async (req, res) => {
+  route.post(`/:articleId/create`, joiValidator(`body`, commentSchema), async (req, res, next) => {
     const {articleId} = req.params;
     try {
       await commentService.create(articleId, req.body);
 
       return res.send();
     } catch (error) {
-      return res.send();
+      return next(error);
     }
   });
 
