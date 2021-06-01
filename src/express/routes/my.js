@@ -18,7 +18,7 @@ myRoute.get(`/`, async (_req, res) => {
   return res.render(`pages/my`, {
     ...pageContent,
     title: `Публикации`,
-    articles,
+    articles: articles.rows,
   });
 });
 
@@ -32,7 +32,26 @@ myRoute.post(`/delete/:articleId`, async (req, res) => {
 
 myRoute.get(`/comments`, async (_req, res) => {
   pageContent.title = `Комментарии`;
-  return res.render(`pages/comments`, pageContent);
+
+  try {
+    const comments = await api.getAllComments();
+
+    return res.render(`pages/comments`, {...pageContent, comments});
+  } catch (error) {
+    return res.render(`pages/comments`, pageContent);
+  }
+});
+
+myRoute.get(`/comments/delete/:commentId`, async (req, res) => {
+  const id = req.params.commentId;
+
+  try {
+    await api.deleteComment(id);
+
+    return res.redirect(`/my/comments`);
+  } catch (error) {
+    return res.render(`pages/500`);
+  }
 });
 
 module.exports = myRoute;

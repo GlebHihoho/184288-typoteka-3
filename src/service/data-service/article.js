@@ -8,8 +8,29 @@ class ArticleService {
   constructor(sequelize) {
     this._Article = sequelize.models.Article;
     this._ArticleCategory = sequelize.models.ArticleCategory;
+    this._Category = sequelize.models.Category;
     this._User = sequelize.models.User;
     this._Comment = sequelize.models.Comment;
+  }
+
+  async create(newArticle) {
+    const article = await this._Article.create(newArticle);
+    await article.addCategories(newArticle.categories);
+
+    return article.get();
+  }
+
+  async update(id, article) {
+    const [updatedRows] = await this._Article.update(article, {where: {id}});
+
+    await this._ArticleCategory.destroy({
+      where: {articleId: id}
+    });
+
+    const updateArticle = await this._Article.findByPk(id);
+    await updateArticle.addCategories([...article.categories]);
+
+    return Boolean(updatedRows);
   }
 
   findAll({limit = 8, offset = 0}) {

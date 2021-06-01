@@ -4,17 +4,17 @@ block content
     section.modal.modal--flex
       .popup.popup--new-publication.popup--flex
         .new-publication
-          form(action="/articles/add" method="post" enctype="multipart/form-data")
+          form(action=`/articles/edit/${article.id}` method="post" enctype="multipart/form-data")
             .new-publication__header
-              h1 Новая публикация
+              h1 Редактирование публикации
               .new-publication__date-form
                 h3 Дата публикации
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for="new-publication-date" aria-label="Календарь")
-                    input#new-publication-date(type="text" name="createdAt" value=articleData.createdAt required="")
+                    input#new-publication-date(type="text" name="createdAt" value=article.createdAt required="")
                     +errorText(errorMessage.createdAt)
-              button.new-publication__button.button.button--colored(type="submit") Опубликовать
+              button.new-publication__button.button.button--colored(type="submit") Сохранить
             a.popup__button.button.button--popup-close(href="/my" aria-label="Закрыть окно")
               | Закрыть
               | окно
@@ -22,11 +22,12 @@ block content
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type="text" placeholder="Заголовок" name="title" value=articleData.title required="")
+                    input(type="text" placeholder="Заголовок" name="title" value=article.title required="")
                   +errorText(errorMessage.title)
+
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type="text" name="image" value=articleData.image placeholder="Фотография" readonly)
+                    input#image-name-field(type="text" name="image" value=article.image placeholder="Фотография" readonly)
                   .form__image-loader.form__image-loader--publication
                     label
                       input.visually-hidden(type="file" name="picture")
@@ -40,19 +41,21 @@ block content
                       type="checkbox"
                       name=`categories`
                       value=category.id
-                      checked=articleData.categories && articleData.categories.includes(String(category.id))
+                      checked=article.categories.includes(category.id)
                     )
                     label(for=`${category.id}`)= category.name
                 +errorText(errorMessage.categories)
                 a.new-publication__form-link.button.button--transparent(href="/categories") Добавить категорию
+
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows="2" placeholder="Анонс публикации" name="preview") #{articleData.preview}
+                    textarea(rows="2" placeholder="Анонс публикации" name="preview") #{article.preview}
                 +errorText(errorMessage.preview)
+
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows="5" placeholder="Полный текст публикации" name="fullText") #{articleData.fullText}
+                    textarea(rows="5" placeholder="Полный текст публикации" name="fullText") #{article.fullText}
                 +errorText(errorMessage.fullText)
       .modal__overlay
 

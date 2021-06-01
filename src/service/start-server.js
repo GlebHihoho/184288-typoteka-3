@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require(`express`);
+const helmet = require(`helmet`);
 
 const {getLogger} = require(`./lib/logger`);
 const routes = require(`./api`);
@@ -11,6 +12,12 @@ const app = express();
 
 app.use(express.json());
 app.use(API_PREFIX, routes);
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: [`'self'`],
+    scriptSrc: [`'self'`],
+  }
+}));
 
 app.use((req, res) => {
   res.status(HTTP_CODE.NOT_FOUND).send(`Not found`);

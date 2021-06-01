@@ -8,6 +8,6 @@ block content
           form(action=`/my/delete/${article.id}`, method="post")
             li.notes__list-item
               time.notes__item-time(datetime= article.createdAt)= dayjs(article.createdAt).format('DD.MM.YYYY')
-              a.notes__item-text(href=`/articles/${article.id}`)= article.title
+              a.notes__item-text(href=`/articles/${article.id}`) #{article.title}
               button.notes__button.button.button--close-item(type='submit')
                 span.visually-hidden Закрыть строку списка
