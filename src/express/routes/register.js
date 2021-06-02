@@ -11,8 +11,16 @@ const pageContent = {
   header: `loggedOff`,
 };
 
-registerRoute.get(`/`, (req, res) => {
-  return res.render(`pages/sign-up`, pageContent);
+registerRoute.get(`/`, (_req, res) => {
+  const user = {
+    email: ``,
+    firstName: ``,
+    lastName: ``,
+    password: ``,
+    repeatPassword: ``,
+    avatar: ``,
+  };
+  return res.render(`pages/sign-up`, {...pageContent, user, errorMessage: {}});
 });
 
 module.exports = registerRoute;
