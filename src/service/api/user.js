@@ -14,7 +14,7 @@ module.exports = (app, userService) => {
   route.post(`/`, [joiValidator(`body`, userSchema), alreadyRegister(userService)], async (req, res, next) => {
     try {
       const user = await userService.create(req.body);
-
+      console.log(`user`, user);
       return res
         .status(HTTP_CODE.CREATED)
         .json({
@@ -22,6 +22,7 @@ module.exports = (app, userService) => {
           data: user
         });
     } catch (error) {
+      console.log(`---------------------`, error);
       return next(error);
     }
   });

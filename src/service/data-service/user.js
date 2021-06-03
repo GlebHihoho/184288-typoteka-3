@@ -11,7 +11,7 @@ class UserService {
 
   async create(data) {
     const {password} = data;
-    const hash = await bcrypt.hash(password, BCRYPT_SALT);
+    const hash = await bcrypt.hash(password, Number(BCRYPT_SALT));
     const user = await this._User.create({...data, password: hash});
 
     return user.get();
