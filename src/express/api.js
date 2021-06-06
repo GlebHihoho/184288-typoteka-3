@@ -32,6 +32,8 @@ const deleteArticleComment = (articleId, commentId) => axiosInstance.delete(`${a
 const createActicleComment = (articleId, data) => axiosInstance.post(`comments/${articleId}/create`, data);
 const searchArticle = (search) => axiosInstance.get(`search`, {params: {search}}).then((res) => res.data);
 
+const createUser = (user) => axiosInstance.post(`users`, user);
+
 module.exports = {
   createCategory,
   getCategories,
@@ -54,4 +56,6 @@ module.exports = {
   deleteArticleComment,
   createActicleComment,
   searchArticle,
+
+  createUser,
 };

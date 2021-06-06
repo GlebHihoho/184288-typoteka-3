@@ -13,7 +13,7 @@ const getErrorMessage = (messages = []) => {
   return errorMessage;
 };
 
-const getArticleImage = (file, body) => {
+const getImage = (file, body) => {
   if (file && file.filename) {
     return file && file.filename;
   }
@@ -39,6 +39,6 @@ const getCategoryArticle = (categories) => {
 
 module.exports = {
   getErrorMessage,
-  getArticleImage,
+  getImage,
   getCategoryArticle,
 };

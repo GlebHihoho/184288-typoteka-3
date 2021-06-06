@@ -1,32 +1,16 @@
 'use strict';
 
 const {Router} = require(`express`);
-const multer = require(`multer`);
-const path = require(`path`);
-const {nanoid} = require(`nanoid`);
 const dayjs = require(`dayjs`);
 const customParseFormat = require(`dayjs/plugin/customParseFormat`);
 dayjs.extend(customParseFormat);
 
-const api = require(`../api`);
-const {getErrorMessage, getArticleImage, getCategoryArticle} = require(`../../utils`);
+const {getErrorMessage, getImage, getCategoryArticle} = require(`../../utils`);
 const {HTTP_CODE} = require(`../../constants`);
-
-const UPLOAD_DIR = `../../../upload`;
-const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
+const {uploadImage} = require(`../middlewares`);
+const api = require(`../api`);
 
 const articlesRoute = new Router();
-
-const storage = multer.diskStorage({
-  destination: uploadDirAbsolute,
-  filename: (_req, file, cb) => {
-    const uniqueName = nanoid(10);
-    const extension = file.originalname.split(`.`).pop();
-    cb(null, `${uniqueName}.${extension}`);
-  }
-});
-
-const upload = multer({storage});
 
 articlesRoute.get(`/add`, async (_req, res) => {
   const categories = await api.getCategories();
@@ -48,11 +32,11 @@ articlesRoute.get(`/add`, async (_req, res) => {
   return res.render(`pages/new-post`, pageContent);
 });
 
-articlesRoute.post(`/add`, upload.single(`picture`), async (req, res) => {
+articlesRoute.post(`/add`, uploadImage.single(`picture`), async (req, res) => {
   const {body, file} = req;
   const articleData = {
     ...body,
-    image: getArticleImage(file, body),
+    image: getImage(file, body),
     createdAt: dayjs(body.createdAt, `DD.MM.YYYY`).toISOString(),
     categories: getCategoryArticle(body.categories),
   };
@@ -161,13 +145,13 @@ articlesRoute.get(`/edit/:articleId`, async (req, res) => {
   }
 });
 
-articlesRoute.post(`/edit/:articleId`, upload.single(`picture`), async (req, res) => {
+articlesRoute.post(`/edit/:articleId`, uploadImage.single(`picture`), async (req, res) => {
   const id = req.params.articleId;
   const {body, file} = req;
 
   const article = {
     ...body,
-    image: getArticleImage(file, body),
+    image: getImage(file, body),
     createdAt: dayjs(body.createdAt, `DD.MM.YYYY`).toISOString(),
     categories: getCategoryArticle(body.categories),
   };
