@@ -15,7 +15,7 @@ block content
             a(href="/login")
               button.popup__tab-switcher.button(type='button') Войти
         .popup__form.popup__form--active.form.form--register
-          form(action='/register', method='post')
+          form(action='/register', method='post', enctype='multipart/form-data')
             .form__field
               label
                 input(
@@ -72,14 +72,9 @@ block content
 
             .form__image-loader
               a.form__avatar.avatar
-                img(
-                  src='img/icons/smile.svg',
-                  name='avatar',
-                  alt='аватар пользователя',
-                  value=user.avatar
-                )
+                img(src='img/icons/smile.svg', alt='аватар пользователя')
               label
-                input.visually-hidden(type='file', name="picture")
+                input.visually-hidden(type='file', name="picture" value=user.avatar)
                 | Загрузить фото профиля
             +errorText(errorMessage.avatar)
 

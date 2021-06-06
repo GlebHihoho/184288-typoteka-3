@@ -41,7 +41,7 @@ route.post(`/`, uploadImage.single(`picture`), async (req, res) => {
   try {
     await createUser(user);
 
-    return res.redirect(`/my`);
+    return res.redirect(`/login`);
   } catch (error) {
     const errorMessage = getErrorMessage(error.response.data.message);
 
